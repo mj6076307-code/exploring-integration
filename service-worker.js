@@ -10,13 +10,13 @@
 const CACHE_NAME = "integrations-navigator-v1";
 
 const DATEIEN_ZUM_CACHEN = [
-    "./",
+      "./",
     "./index.html",
     "./index.css",
     "./index.js",
     "./manifest.json",
-    "./icons/icon-192.png",
-    "./icons/icon-512.png"
+    "./icon-192.png",
+    "./icon-512.png"
 ];
 
 
