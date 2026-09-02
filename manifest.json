@@ -1,7 +1,7 @@
 {
   "name": "Integrations-Navigator München",
   "short_name": "Exploring Integration",
-  "description": "Dein Weg zur Selbstständigkeit: Missionen rund um Integrationskurs, Kita, Sozialbürgerhaus, Mobilität, Ausländerbehörde, Jobcenter, Wohnung und Arbeit in München.",
+  "description": "Dein Weg zur Selbstständigkeit",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
