@@ -1,2139 +1,21 @@
-<!DOCTYPE html>
-<html lang="de">
-    <link rel="stylesheet" href="index.css">
-    <script src="index.js" defer></script>
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<title>Explore-Integrations München</title>
-
-
-<!-- =========================================================
-     PWA
-========================================================= -->
-
-<link rel="manifest" href="./manifest.json">
-
-<meta name="theme-color" content="#2563eb">
-
-<link rel="apple-touch-icon"
-      href="./icons/icon-192.png">
-
-<meta name="mobile-web-app-capable"
-      content="yes">
-
-<meta name="apple-mobile-web-app-capable"
-      content="yes">
-
-<meta name="apple-mobile-web-app-status-bar-style"
-      content="default">
-
-<meta name="apple-mobile-web-app-title"
-      content="Exploring Integration">
-
-</head>
-
-<style>
-    
-
 /* =========================================================
-   GRUNDLAGEN
+   index.js
+
+   HINWEIS:
+   Die komplette Spiellogik (Missionen, Punkte, Rewards,
+   Reward-Popup, Konfetti, Musik) befindet sich bereits
+   direkt im <script>-Block innerhalb von index.html.
+
+   Diese Datei existiert nur, damit der
+   <script src="index.js" defer>-Verweis in index.html
+   funktioniert und keinen Fehler im Service-Worker-Cache
+   verursacht.
+
+   Du kannst hier zusätzliche, eigene Skripte ergänzen,
+   falls du künftig etwas außerhalb von index.html
+   anpassen möchtest.
 ========================================================= */
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-:root {
-
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-
-    --green: #16a34a;
-    --green-light: #f0fdf4;
-
-    --orange: #f59e0b;
-    --orange-dark: #ea580c;
-
-    --purple: #7c3aed;
-
-    --red: #dc2626;
-
-    --bg: #f4f7fb;
-    --card: #ffffff;
-
-    --text: #172033;
-    --muted: #667085;
-
-    --border: #e5e7eb;
-
-    --shadow:
-        0 10px 30px rgba(0,0,0,.08);
-
-    --radius: 20px;
-}
-
-body {
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background: var(--bg);
-
-    color: var(--text);
-
-    min-height: 100vh;
-}
-.buttonkita{
-   
-    -btn-bg: #BB5A00;
-    --bs-btn-border-color: #BB5A00;
-    --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: rgb(158.95, 76.5, 0);
-    --bs-btn-hover-border-color: rgb(149.6, 72, 0);
-    --bs-btn-focus-shadow-rgb: 197, 115, 38;
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: rgb(149.6, 72, 0);
-    --bs-btn-active-border-color: rgb(140.25, 67.5, 0);
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
-    --bs-btn-disabled-color: #fff;
-    --bs-btn-disabled-bg: #BB5A00;
-    --bs-btn-disabled-border-color: #BB5A00;
-}
-
 /* =========================================================
-   HEADER
-========================================================= */
-
-.header {
-
-    background:
-        linear-gradient(
-            135deg,
-         #0c1940, #062547);
-        
-
-    color: white;
-
-    padding: 18px 30px;
-
-    position: sticky;
-
-    top: 0;
-
-    z-index: 100;
-
-    box-shadow:
-        0 5px 20px rgba(0,0,0,.12);
-}
-
-.header-inner {
-
-    max-width: 1400px;
-
-    margin: auto;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 20px;
-}
-
-.logo {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-}
-
-.logo-icon {
-
-    font-size: 35px;
-}
-
-.logo h1 {
-
-    font-size: 22px;
-}
-
-.logo small {
-
-    display: block;
-
-    opacity: .85;
-
-    margin-top: 3px;
-}
-
-
-/* =========================================================
-   PUNKTE HUD
-========================================================= */
-
-.hud {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-}
-
-.hud-box {
-
-    background:
-        rgba(255,255,255,.15);
-
-    border:
-        1px solid
-        rgba(255,255,255,.2);
-
-    border-radius: 14px;
-
-    padding: 10px 18px;
-
-    text-align: center;
-}
-
-.hud-box strong {
-
-    display: block;
-
-    font-size: 20px;
-}
-
-.hud-box span {
-
-    font-size: 12px;
-
-    opacity: .85;
-}
-
-
-/* =========================================================
-   MAIN
-========================================================= */
-
-.container {
-
-    width:
-        min(1400px,94%);
-
-    margin:
-        30px auto 60px;
-}
-
-
-/* =========================================================
-   WELCOME
-========================================================= */
-
-.welcome {
-
-    margin-bottom: 28px;
-}
-
-.welcome h2 {
-
-    font-size: 30px;
-
-    margin-bottom: 8px;
-}
-
-.welcome p {
-
-    color: var(--muted);
-
-    line-height: 1.5;
-}
-
-
-/* =========================================================
-   PUNKTE CARD
-========================================================= */
-
-.points-card {
-
-    background: white;
-
-    border-radius: var(--radius);
-
-    padding: 24px;
-
-    box-shadow: var(--shadow);
-
-    margin-bottom: 28px;
-}
-
-.points-header {
-
-    display: flex;
-
-    justify-content:
-        space-between;
-
-    align-items: center;
-
-    gap: 20px;
-}
-
-.points-title {
-
-    font-size: 20px;
-
-    font-weight: bold;
-}
-
-.total-points {
-
-    font-size: 28px;
-
-    font-weight: bold;
-
-    color: var(--primary);
-}
-
-.points-description {
-
-    color: var(--muted);
-
-    margin-top: 8px;
-}
-
-
-/* =========================================================
-   KATEGORIEN
-========================================================= */
-
-.category-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
-    gap: 18px;
-
-    margin-bottom: 30px;
-}
-
-.category-card {
-
-    background: white;
-
-    border:
-        2px solid transparent;
-
-    border-radius: var(--radius);
-
-    padding: 22px;
-
-    cursor: pointer;
-
-    transition: .2s ease;
-
-    box-shadow: var(--shadow);
-}
-
-.category-card:hover {
-
-    transform:
-        translateY(-4px);
-
-    border-color:
-        #bfdbfe;
-}
-
-.category-card.active {
-
-    border-color:
-        var(--primary);
-
-    background:
-        #eff6ff;
-}
-
-.category-icon {
-
-    font-size: 38px;
-
-    margin-bottom: 14px;
-}
-
-.category-card h3 {
-
-    margin-bottom: 8px;
-
-    font-size: 18px;
-}
-
-.category-card p {
-
-    color: var(--muted);
-
-    font-size: 14px;
-
-    line-height: 1.5;
-}
-
-.category-arrow {
-
-    margin-top: 16px;
-
-    font-size: 22px;
-
-    color: var(--primary);
-}
-
-
-/* =========================================================
-   CATEGORY CONTENT
-========================================================= */
-
-.category-content {
-
-    display: none;
-
-    animation:
-        fadeIn .3s ease;
-}
-
-.category-content.active {
-
-    display: block;
-}
-
-@keyframes fadeIn {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-            translateY(10px);
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform:
-            translateY(0);
-    }
-}
-
-
-/* =========================================================
-   CATEGORY HEADER
-========================================================= */
-
-.category-header {
-
-    background: white;
-
-    border-radius:
-        var(--radius);
-
-    padding: 28px;
-
-    box-shadow:
-        var(--shadow);
-
-    margin-bottom: 20px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 18px;
-}
-
-.category-header-icon {
-
-    font-size: 48px;
-}
-
-
-/* =========================================================
-   MISSION
-========================================================= */
-
-.mission {
-
-    background: white;
-
-    border-radius:
-        var(--radius);
-
-    padding: 25px;
-
-    box-shadow:
-        var(--shadow);
-
-    border:
-        2px solid transparent;
-}
-
-.mission:hover {
-
-    border-color:
-        #dbeafe;
-}
-
-.mission-top {
-
-    display: flex;
-
-    justify-content:
-        space-between;
-
-    align-items:
-        flex-start;
-}
-
-.mission-icon {
-
-    font-size: 38px;
-}
-
-.points {
-
-    background:
-        #fef3c7;
-
-    color:
-        #92400e;
-
-    padding:
-        7px 11px;
-
-    border-radius:
-        12px;
-
-    font-size: 13px;
-
-    font-weight: bold;
-}
-
-.mission h3 {
-
-    margin:
-        14px 0 8px;
-
-    font-size: 21px;
-}
-
-.mission p {
-
-    color:
-        var(--muted);
-
-    line-height:
-        1.6;
-}
-
-
-/* =========================================================
-   MISSION WORKSPACE
-========================================================= */
-
-.mission-workspace {
-
-    display: none;
-
-    margin-top: 22px;
-
-    padding-top: 22px;
-
-    border-top:
-        1px solid var(--border);
-}
-
-.mission-workspace.show {
-
-    display: block;
-}
-
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
-.game-button,
-.mission-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 8px 16px;
-    width: auto;
-
-    border: none;
-    border-radius: 10px;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    cursor: pointer;
-    background-color: #0c1940;
-    color:white;
-}
-
-.game-button:hover,
-.mission-button:hover {
-
-    background:
-        var(--primary-dark);
-}
-
-
-/* =========================================================
-   FORM
-========================================================= */
-
-.form-group {
-
-    margin-top: 17px;
-}
-
-.form-group label {
-
-    display: block;
-
-    font-weight: bold;
-
-    margin-bottom: 7px;
-}
-
-input,
-select,
-textarea {
-
-    width: 100%;
-
-    border:
-        1px solid #d1d5db;
-
-    border-radius:
-        10px;
-
-    padding:
-        12px;
-
-    font-family:
-        inherit;
-
-    font-size:
-        15px;
-
-    background:
-        white;
-}
-
-textarea {
-
-    resize:
-        vertical;
-}
-
-
-/* =========================================================
-   TASK
-========================================================= */
-
-.task {
-
-    background:
-        #f8fafc;
-
-    border:
-        1px solid var(--border);
-
-    border-radius:
-        14px;
-
-    padding:
-        18px;
-
-    margin-top:
-        14px;
-}
-
-.task strong {
-
-    display: block;
-
-    margin-bottom:
-        8px;
-}
-
-.task ul {
-
-    padding-left:
-        22px;
-
-    color:
-        var(--muted);
-
-    line-height:
-        1.8;
-}
-
-
-/* =========================================================
-   ERFOLG
-========================================================= */
-
-.success-box {
-
-    display: none;
-
-    margin-top:
-        20px;
-
-    background:
-        #f0fdf4;
-
-    border:
-        2px solid #86efac;
-
-    color:
-        #166534;
-
-    border-radius:
-        16px;
-
-    padding:
-        20px;
-
-    text-align:
-        center;
-}
-
-.success-box.show {
-
-    display:
-        block;
-}
-
-
-/* =========================================================
-   NÄCHSTE MISSION
-========================================================= */
-
-.next-mission {
-
-    display: none;
-
-    margin-top:
-        20px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #1d4ed8
-        );
-
-    color:
-        white;
-
-    border-radius:
-        16px;
-
-    padding:
-        20px;
-}
-
-.next-mission.show {
-
-    display:
-        block;
-}
-
-.next-mission h3 {
-
-    margin-bottom:
-        8px;
-}
-
-
-/* =========================================================
-   INFO
-========================================================= */
-
-.info-card {
-
-    background:
-        white;
-
-    border-radius:
-        var(--radius);
-
-    padding:
-        22px;
-
-    box-shadow:
-        var(--shadow);
-}
-
-.info-card p {
-
-    color:
-        var(--muted);
-
-    line-height:
-        1.6;
-}
-
-
-/* =========================================================
-   REWARDS
-========================================================= */
-
-.rewards-section {
-
-    margin-top:
-        35px;
-}
-
-.rewards-header {
-
-    margin-bottom:
-        18px;
-}
-
-.rewards-header h2 {
-
-    font-size:
-        26px;
-}
-
-.rewards-header p {
-
-    color:
-        var(--muted);
-
-    margin-top:
-        5px;
-}
-
-.rewards-grid {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
-    gap:
-        18px;
-}
-
-.reward {
-
-    background:
-        white;
-
-    border-radius:
-        var(--radius);
-
-    padding:
-        24px;
-
-    box-shadow:
-        var(--shadow);
-
-    border:
-        2px solid #e5e7eb;
-
-    transition:
-        .2s;
-}
-
-.reward.unlocked {
-
-    border-color:
-        #86efac;
-
-    background:
-        #f0fdf4;
-}
-
-.reward-icon {
-
-    font-size:
-        42px;
-
-    margin-bottom:
-        12px;
-}
-
-.reward h3 {
-
-    margin-bottom:
-        8px;
-}
-
-.reward p {
-
-    color:
-        var(--muted);
-
-    line-height:
-        1.5;
-}
-
-.reward-points {
-
-    margin-top:
-        14px;
-
-    font-weight:
-        bold;
-
-    color:
-        var(--primary);
-}
-
-.reward-status {
-
-    margin-top:
-        15px;
-
-    font-weight:
-        bold;
-}
-
-.reward.unlocked .reward-status {
-
-    color:
-        var(--green);
-}
-
-
-/* =========================================================
-   RESET
-========================================================= */
-
-.reset-section {
-
-    margin-top:
-        35px;
-
-    background:
-        white;
-
-    border-radius:
-        var(--radius);
-
-    padding:
-        25px;
-
-    box-shadow:
-        var(--shadow);
-
-    border:
-        2px solid #fee2e2;
-}
-
-.reset-section h2 {
-
-    color:
-        var(--red);
-
-    margin-bottom:
-        8px;
-}
-
-.reset-section p {
-
-    color:
-        var(--muted);
-
-    line-height:
-        1.5;
-}
-
-.reset-button {
-
-    width:
-        100%;
-
-    margin-top:
-        18px;
-
-    border:
-        none;
-
-    border-radius:
-        12px;
-
-    padding:
-        14px;
-
-    background:
-        var(--red);
-
-    color:
-        white;
-
-    font-weight:
-        bold;
-
-    cursor:
-        pointer;
-}
-
-.reset-button:hover {
-
-    background:
-        #b91c1c;
-}
-
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media(max-width:1100px) {
-
-    .category-grid {
-
-        grid-template-columns:
-            repeat(3,1fr);
-    }
-
-    .rewards-grid {
-
-        grid-template-columns:
-            1fr 1fr;
-    }
-}
-
-@media(max-width:750px) {
-
-    .header {
-
-        padding:
-            14px 16px;
-    }
-
-    .header-inner {
-
-        flex-direction:
-            column;
-
-        align-items:
-            stretch;
-    }
-
-    .hud {
-
-        justify-content:
-            space-between;
-    }
-
-    .container {
-
-        width:
-            94%;
-
-        margin-top:
-            20px;
-    }
-
-    .welcome h2 {
-
-        font-size:
-            24px;
-    }
-
-    .category-grid {
-
-        grid-template-columns:
-            repeat(2,1fr);
-
-        gap:
-            12px;
-    }
-
-    .category-card {
-
-        padding:
-            16px;
-    }
-
-    .category-icon {
-
-        font-size:
-            30px;
-    }
-
-    .category-card h3 {
-
-        font-size:
-            16px;
-    }
-
-    .rewards-grid {
-
-        grid-template-columns:
-            1fr;
-    }
-}
-
-@media(max-width:480px) {
-
-    .hud-box {
-
-        flex:
-            1;
-
-        padding:
-            8px;
-    }
-
-    .hud-box strong {
-
-        font-size:
-            17px;
-    }
-
-    .mission {
-
-        padding:
-            18px;
-    }
-
-    
-}
-
-.reward-animation {
-    animation: rewardPop 0.7s ease-out;
-}
-
-@keyframes rewardPop {
-
-    0% {
-        opacity: 0;
-        transform: scale(0.7);
-    }
-
-    60% {
-        opacity: 1;
-        transform: scale(1.08);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-}
-
-
-/* =========================================================
-   GROSSES REWARD-POPUP
-========================================================= */
-
-.reward-modal-overlay {
-
-    display: none;
-
-    position: fixed;
-
-    inset: 0;
-
-    background: rgba(6, 12, 30, .72);
-
-    backdrop-filter: blur(4px);
-
-    z-index: 1000;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 20px;
-
-    overflow: hidden;
-}
-
-.reward-modal-overlay.show {
-
-    display: flex;
-
-    animation: overlayFadeIn .3s ease;
-}
-
-@keyframes overlayFadeIn {
-
-    from { opacity: 0; }
-
-    to { opacity: 1; }
-
-}
-
-.reward-modal {
-
-    position: relative;
-
-    width: min(560px, 100%);
-
-    background:
-        linear-gradient(
-            160deg,
-            #ffffff,
-            #eff6ff
-        );
-
-    border-radius: 28px;
-
-    padding: 48px 36px 40px;
-
-    text-align: center;
-
-    box-shadow:
-        0 30px 80px rgba(0,0,0,.35),
-        0 0 0 6px rgba(255,255,255,.4) inset;
-
-    animation:
-        rewardModalPop .6s
-        cubic-bezier(.2,1.4,.4,1);
-
-    z-index: 2;
-}
-
-@keyframes rewardModalPop {
-
-    0% {
-        opacity: 0;
-        transform: scale(.4) translateY(40px) rotate(-4deg);
-    }
-
-    60% {
-        opacity: 1;
-        transform: scale(1.06) translateY(-6px) rotate(1deg);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0) rotate(0);
-    }
-
-}
-
-.reward-modal-close {
-
-    position: absolute;
-
-    top: 16px;
-
-    right: 16px;
-
-    width: 36px;
-
-    height: 36px;
-
-    border: none;
-
-    border-radius: 50%;
-
-    background: rgba(23,32,51,.08);
-
-    color: var(--text);
-
-    font-size: 18px;
-
-    line-height: 1;
-
-    cursor: pointer;
-}
-
-.reward-modal-close:hover {
-
-    background: rgba(23,32,51,.16);
-
-}
-
-.reward-modal-badge {
-
-    display: inline-block;
-
-    font-size: 13px;
-
-    font-weight: bold;
-
-    letter-spacing: .5px;
-
-    text-transform: uppercase;
-
-    color: var(--primary);
-
-    background: #dbeafe;
-
-    padding: 6px 16px;
-
-    border-radius: 999px;
-
-    margin-bottom: 18px;
-}
-
-.reward-modal-icon {
-
-    font-size: 96px;
-
-    line-height: 1;
-
-    margin-bottom: 10px;
-
-    animation:
-        rewardIconBounce
-        1.1s ease-in-out infinite;
-
-    filter:
-        drop-shadow(0 10px 18px rgba(37,99,235,.35));
-}
-
-@keyframes rewardIconBounce {
-
-    0%, 100% { transform: translateY(0) scale(1); }
-
-    50% { transform: translateY(-14px) scale(1.05); }
-
-}
-
-.reward-modal h2 {
-
-    font-size: 28px;
-
-    margin-bottom: 10px;
-
-    color: var(--text);
-}
-
-.reward-modal p.reward-modal-text {
-
-    color: var(--muted);
-
-    line-height: 1.6;
-
-    font-size: 16px;
-
-    margin-bottom: 20px;
-}
-
-.reward-modal-points {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    font-size: 20px;
-
-    font-weight: bold;
-
-    color: #92400e;
-
-    background: #fef3c7;
-
-    padding: 10px 22px;
-
-    border-radius: 999px;
-
-    margin-bottom: 26px;
-
-    animation:
-        rewardPointsGlow
-        1.6s ease-in-out infinite;
-}
-
-@keyframes rewardPointsGlow {
-
-    0%, 100% {
-        box-shadow: 0 0 0 0 rgba(245,158,11,.35);
-    }
-
-    50% {
-        box-shadow: 0 0 0 12px rgba(245,158,11,0);
-    }
-
-}
-
-.reward-modal-button {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    gap: 8px;
-
-    border: none;
-
-    border-radius: 14px;
-
-    padding: 14px 32px;
-
-    font-size: 16px;
-
-    font-weight: bold;
-
-    color: white;
-
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #1d4ed8
-        );
-
-    cursor: pointer;
-
-    box-shadow: 0 10px 24px rgba(37,99,235,.4);
-}
-
-.reward-modal-button:hover {
-
-    background:
-        linear-gradient(
-            135deg,
-            #1d4ed8,
-            #1e40af
-        );
-}
-
-.confetti-piece {
-
-    position: absolute;
-
-    top: -10%;
-
-    width: 10px;
-
-    height: 16px;
-
-    opacity: .9;
-
-    border-radius: 2px;
-
-    animation-name: confettiFall;
-
-    animation-timing-function: linear;
-
-    animation-fill-mode: forwards;
-
-    pointer-events: none;
-
-    z-index: 1;
-}
-
-@keyframes confettiFall {
-
-    0% {
-        transform:
-            translateY(0)
-            translateX(0)
-            rotate(0deg);
-
-        opacity: 1;
-    }
-
-    100% {
-        transform:
-            translateY(110vh)
-            translateX(var(--drift, 40px))
-            rotate(540deg);
-
-        opacity: .9;
-    }
-
-}
-
-@media(max-width:480px) {
-
-    .reward-modal {
-
-        padding: 40px 22px 32px;
-
-    }
-
-    .reward-modal-icon {
-
-        font-size: 72px;
-
-    }
-
-    .reward-modal h2 {
-
-        font-size: 22px;
-
-    }
-
-}
-</style>
-<body>
-
-
-<!-- =========================================================
-     HEADER
-========================================================= -->
-
-<header class="header">
-
-<div class="header-inner">
-
-    <div class="logo">
-
-        <div class="logo-icon">
-          <img
-    src="./icons/exploringintegration.png"
-    alt="Exploring Integration"
-    width="80"
-    height="80"
->
-        </div>
-
-        <div>
-
-            <h1>
-                Integrations-Navigator
-            </h1>
-
-            <small>
-                Dein Weg zur Selbstständigkeit
-            </small>
-
-        </div>
-
-    </div>
-
-
-    <div class="hud">
-
-        <div class="hud-box">
-
-            <strong id="punkte">
-                0
-            </strong>
-
-            <span>
-                ⭐ Gesamtpunkte
-            </span>
-
-        </div>
-
-
-        <div class="hud-box">
-
-            <strong id="erledigt">
-                0
-            </strong>
-
-            <span>
-                ✅ Aufgaben
-            </span>
-
-        </div>
-
-    </div>
-
-</div>
-
-</header>
-
-
-
-<main class="container">
-
-
-<section class="welcome">
-
-<h2>
-    Willkommen im Integrations-Navigator 👋
-</h2>
-
-<p>
-    Hier erledigst du echte Aufgaben Schritt für Schritt.
-    Jede abgeschlossene Aufgabe bringt Punkte.
-    Wenn eine Aufgabe abgeschlossen ist, wartet bereits
-    die nächste auf dich.
-</p>
-
-</section>
-
-<!----Points-Card ------------------------------------------------------------------------------->
-
-<section class="points-card">
-
-<div class="points-header">
-
-    <div>
-
-        <div class="points-title">
-            ⭐ Dein Fortschritt
-        </div>
-
-        <div class="points-description">
-            Sammle Punkte durch selbstständiges Erledigen
-            deiner Aufgaben.
-        </div>
-
-    </div>
-
-
-    <div class="total-points">
-
-        <span id="punkteGross">
-            0
-        </span>
-
-        ⭐
-
-    </div>
-
-</div>
-
-</section>
-
-<!--category-grid-------------------------------------------------------------------------------->
-
-<section class="category-grid">
-
-
-<div
-    class="category-card active"
-    onclick="zeigeKategorie('integration',this)"
->
-
-<div class="category-icon">
-    📚
-</div>
-
-<h3>
-    Integrationskurs
-</h3>
-
-<p>
-    Deutsch lernen und einen passenden Kurs finden.
-</p>
-
-<div class="category-arrow">
-    ›
-</div>
-
-</div>
-
-
-
-<div
-    class="category-card"
-    onclick="zeigeKategorie('kita',this)"
->
-
-<div class="category-icon">
-    🏫
-</div>
-
-<h3>
-    Kita
-</h3>
-
-<p>
-    Eine passende Kita finden.
-</p>
-
-<div class="category-arrow">
-    ›
-</div>
-
-</div>
-
-
-
-<div
-    class="category-card"
-    onclick="zeigeKategorie('sozial',this)"
->
-
-<div class="category-icon">
-    🏛️
-</div>
-
-<h3>
-    Sozialbürgerhaus
-</h3>
-
-<p>
-    Zuständige Stelle anhand der PLZ finden.
-</p>
-
-<div class="category-arrow">
-    ›
-</div>
-
-</div>
-
-
-
-<div
-    class="category-card"
-    onclick="zeigeKategorie('mobilitaet',this)"
->
-
-<div class="category-icon">
-    🚌
-</div>
-
-<h3>
-    Mobilität
-</h3>
-
-<p>
-    Selbstständig mit Bus und Bahn unterwegs sein.
-</p>
-
-<div class="category-arrow">
-    ›
-</div>
-
-</div>
-
-
-
-<div
-    class="category-card"
-    onclick="zeigeKategorie('auslaender',this)"
->
-
-<div class="category-icon">
-    🛂
-</div>
-
-<h3>
-    Ausländerbehörde
-</h3>
-
-<p>
-    Informationen und Anträge selbst finden.
-</p>
-
-<div class="category-arrow">
-    ›
-</div>
-
-</div>
-
-
-
-<div
-    class="category-card"
-    onclick="zeigeKategorie('jobcenter',this)"
->
-
-<div class="category-icon">
-    💼
-</div>
-
-<h3>
-    Jobcenter
-</h3>
-
-<p>
-    Aufgaben selbstständig erledigen.
-</p>
-
-<div class="category-arrow">
-    ›
-</div>
-
-</div>
-
-
-
-<div
-    class="category-card"
-    onclick="zeigeKategorie('arbeit',this)"
->
-
-<div class="category-icon">
-    👷
-</div>
-
-<h3>
-    Agentur für Arbeit
-</h3>
-
-<p>
-    Arbeit, Ausbildung und Beratung.
-</p>
-
-<div class="category-arrow">
-    ›
-</div>
-
-</div>
-<div
-    class="category-card"
-    onclick="zeigeKategorie('wohnung',this)"
->
-
-<div class="category-icon">
-
-</div>
-
-<h3>
-   Wohnungssuche
-</h3>
-
-<p>
-    Sowon Antrag stellen
-</p>
-
-<div class="category-arrow">
-    ›
-</div>
-
-</div>
-
-</section>
-
-<!----category-content active---------------------------------------------------------------------->
-
-<section
-    id="integration"
-    class="category-content active"
->
-
-<div class="category-header">
-
-<div class="category-header-icon">
-    📚
-</div>
-
-<div>
-
-<h2>
-    Integrationskurs
-</h2>
-
-<p>
-    Nach jeder abgeschlossenen Aufgabe
-    beginnt automatisch die nächste.
-</p>
-
-</div>
-
-</div>
-
-
-<div id="missionContainer-integration"></div>
-
-</section>
-
-
-
-<section
-    id="kita"
-    class="category-content"
->
-
-<div class="category-header">
-
-<div class="category-header-icon">
-    🏫
-</div>
-
-<div>
-
-<h2>
-    Kita
-</h2>
-
-<p>
-    Schritt für Schritt selbstständig werden.
-</p>
-
-</div>
-
-</div>
-
-
-<div id="missionContainer-kita"></div>
-
-</section>
-
-
-
-<section
-    id="sozial"
-    class="category-content"
->
-
-<div class="category-header">
-
-<div class="category-header-icon">
-    🏛️
-</div>
-
-<div>
-
-<h2>
-    Sozialbürgerhaus
-</h2>
-
-<p>
-    Finde dein zuständiges Sozialbürgerhaus
-    direkt anhand deiner PLZ.
-</p>
-
-</div>
-
-</div>
-
-
-<div id="missionContainer-sozial"></div>
-
-</section>
-
-
-
-<section
-    id="mobilitaet"
-    class="category-content"
->
-
-<div class="category-header">
-
-<div class="category-header-icon">
-    🚌
-</div>
-
-<div>
-
-<h2>
-    Mobilität
-</h2>
-
-<p>
-    Lerne, deine Fahrten selbstständig zu planen.
-</p>
-
-</div>
-
-</div>
-
-
-<div id="missionContainer-mobilitaet"></div>
-
-</section>
-
-
-
-<section
-    id="auslaender"
-    class="category-content"
->
-
-<div class="category-header">
-
-<div class="category-header-icon">
-    🛂
-</div>
-
-<div>
-
-<h2>
-    Ausländerbehörde
-</h2>
-
-<p>
-    Jede erledigte Aufgabe bringt dich einen Schritt weiter.
-</p>
-
-</div>
-
-</div>
-
-
-<div id="missionContainer-auslaender"></div>
-
-</section>
-
-
-
-<section
-    id="jobcenter"
-    class="category-content"
->
-
-<div class="category-header">
-
-<div class="category-header-icon">
-    💼
-</div>
-
-<div>
-
-<h2>
-    Jobcenter
-</h2>
-
-<p>
-    Selbstständig digitale Aufgaben erledigen.
-</p>
-
-</div>
-
-</div>
-
-
-<div id="missionContainer-jobcenter"></div>
-
-</section>
-
-
-
-<section
-    id="arbeit"
-    class="category-content"
->
-
-<div class="category-header">
-
-<div class="category-header-icon">
-    👷
-</div>
-
-<div>
-
-<h2>
-    Agentur für Arbeit
-</h2>
-
-<p>
-    Arbeit, Ausbildung und Weiterbildung entdecken.
-</p>
-
-</div>
-
-</div>
-
-
-<div id="missionContainer-arbeit"></div>
-
-</section>
-
-<section
-    id="wohnung"
-    class="category-content"
->
-
-<div class="category-header">
-
-<div class="category-header-icon">
-    🏫
-</div>
-
-<div>
-
-<h2>
-    Wohnungssuche
-</h2>
-
-<p>
-    Schritt für Schritt selbstständig werden.
-</p>
-
-</div>
-
-</div>
-
-
-<div id="missionContainer-wohnung"></div>
-
-</section>
-
-
-<!--------rewards-section--------------------------------------------------------------------->
-
-<section class="rewards-section">
-
-<div class="rewards-header">
-
-<h2>
-    🏆 Deine Rewards
-</h2>
-
-<p>
-    Sammle Punkte und schalte echte Belohnungen frei.
-</p>
-
-</div>
-
-
-<div class="rewards-grid" id="rewardsContainer"></div>
-
-</section>
-
-
-<!---------"reset-section"------------------------------------------------>
-<section class="reset-section">
-
-<h2>
-    🔄 Spiel zurücksetzen
-</h2>
-
-<p>
-    Damit werden deine gesammelten Punkte,
-    erledigten Aufgaben und freigeschalteten Rewards
-    gelöscht. Danach beginnt der Navigator wieder
-    bei 0 Punkten.
-</p>
-
-<button
-    class="reset-button"
-    onclick="spielZuruecksetzen()"
->
-    🗑️ Fortschritt vollständig zurücksetzen
-</button>
-
-</section>
-
-
-</main>
-
-
-<!-- =========================================================
-     GROSSES REWARD-POPUP (wird per JS befüllt)
-========================================================= -->
-
-<div
-    class="reward-modal-overlay"
-    id="rewardModalOverlay"
-    onclick="if(event.target === this) schliesseRewardModal()"
-></div>
-
-
-<script>/* =========================================================
    EXPLORING INTEGRATION
    Integrations-Navigator München
 
@@ -2797,6 +679,30 @@ function naechsteMission(kategorie) {
 
 }
 
+function zeigeKategorie(kategorie) {
+
+    // Themenbereich anzeigen
+    // dein bisheriger Code bleibt hier
+
+    // Menü auf dem Handy verstecken
+    if (window.innerWidth <= 768) {
+        document.querySelector(".categories").classList.add("menu-hidden");
+        document.querySelector("#backButton").classList.add("show");
+    }
+}
+
+function zeigeStartseite() {
+
+    // Menü wieder anzeigen
+    document.querySelector(".categories").classList.remove("menu-hidden");
+
+    // Zurück-Button verstecken
+    document.querySelector("#backButton").classList.remove("show");
+
+    // Themenbereich schließen
+    // falls du dafür bereits eine Funktion hast,
+    // kannst du sie hier verwenden
+}
 
 /* =========================================================
    KATEGORIE ANZEIGEN
@@ -3312,7 +1218,7 @@ function missionHTML(
                 <label>
                     🎯 Was hast du gesucht?
                 </label>
-<select id="jobTask">
+                <select id="jobTask">
 
                     <option value="">
                         Bitte auswählen
@@ -3337,12 +1243,54 @@ function missionHTML(
                     <option>
                         📅 Termin vereinbart
                     </option>
+                          <option>
+                        Kindernachzug aus dem Ausland
+                    </option>
+
+                    <option>
+                      Deutsche oder Ausländer*innen, die eine Aufenthaltserlaubnis haben, können ihre ausländischen, minderjährigen und ledigen Kinder nachziehen lassen.
+                    </option>
+
+                    <option>
+                        Aufenthaltserlaubnis – Qualifizierte Geduldete
+                    </option>
+
+                    <option>
+                        📎 Unterlagen hochgeladen
+                    </option>
+
+                    <option>
+                        📅 Termin vereinbart
+                    </option>
+                    <option>
+                    Asyl beantragen
+                    </option>
+                    <option>
+                    Niederlassungserlaubnis
+                    </option>
+                     <option>
+                   Aufenthaltserlaubnis für Kriegsflüchtlinge aus der Ukraine beantragen
+                    </option>
+                     <option>
+                    Aufenthaltserlaubnis für Flüchtlinge und Asylberechtigte
+                    </option>
+                     
+                <option>
+                    Aufenthaltserlaubnis für subsidiär Schutzberechtigte
+                    </option>
+
+                <option>
+                    Aufenthaltserlaubnis für Flüchtlinge und Asylberechtigte
+                    </option>
+
+                <option> Aufenthaltserlaubnis aufgrund einer Aufnahmezusage des Bundes</option>
+                     <option>Aufenthaltserlaubnis für humanitären Aufenthalt ohne Schutzstatus</option>
+                       <option>Aufenthaltserlaubnis für gut integrierte Jugendliche und junge Volljährige beantragen</option
+                       <option>Aufenthaltserlaubnis bei nachhaltiger Integration beantragen </option
+
+  <option>Arbeitserlaubnis beantragen </option>
 
                 </select>
-                <input
-                    id="auslaenderAnliegen"
-                    placeholder="z. B. Aufenthaltstitel verlängern"
-                >
 
             </div>
 
@@ -3351,13 +1299,61 @@ function missionHTML(
                 <label>
                     📋 Was hast du gefunden?
                 </label>
+                <select id="jobTask">
                 
+                    option value="">
+                        Bitte auswählen
+                    </option>
 
-                <textarea
-                    id="auslaenderErgebnis"
-                    rows="4"
-                    placeholder="Beschreibe dein Ergebnis..."
-                ></textarea>
+                    <option>
+                        Kindernachzug aus dem Ausland
+                    </option>
+
+                    <option>
+                      Deutsche oder Ausländer*innen, die eine Aufenthaltserlaubnis haben, können ihre ausländischen, minderjährigen und ledigen Kinder nachziehen lassen.
+                    </option>
+
+                    <option>
+                        Aufenthaltserlaubnis – Qualifizierte Geduldete
+                    </option>
+
+                    <option>
+                        📎 Unterlagen hochgeladen
+                    </option>
+
+                    <option>
+                        📅 Termin vereinbart
+                    </option>
+                    <option>
+                    Asyl beantragen
+                    </option>
+                    <option>
+                    Niederlassungserlaubnis
+                    </option>
+                     <option>
+                   Aufenthaltserlaubnis für Kriegsflüchtlinge aus der Ukraine beantragen
+                    </option>
+                     <option>
+                    Aufenthaltserlaubnis für Flüchtlinge und Asylberechtigte
+                    </option>
+                     
+                <option>
+                    Aufenthaltserlaubnis für subsidiär Schutzberechtigte
+                    </option>
+
+                <option>
+                    Aufenthaltserlaubnis für Flüchtlinge und Asylberechtigte
+                    </option>
+
+                <option> Aufenthaltserlaubnis aufgrund einer Aufnahmezusage des Bundes</option>
+                     <option>Aufenthaltserlaubnis für humanitären Aufenthalt ohne Schutzstatus</option>
+                       <option>Aufenthaltserlaubnis für gut integrierte Jugendliche und junge Volljährige beantragen</option
+                       <option>Aufenthaltserlaubnis bei nachhaltiger Integration beantragen </option
+
+  <option>Arbeitserlaubnis beantragen </option>
+
+                </select>
+                
 
             </div>
 
@@ -4043,99 +2039,68 @@ function spezielleMissionAbschliessen(
        AUSLÄNDERBEHÖRDE
     ===================================================== */
 
-    if (
-        mission.typ === "auslaender"
-    ) {
+    if (mission.typ === "auslaender") {
 
         const anliegen =
-            document.getElementById(
-                "auslaenderAnliegen"
-            )?.value.trim();
-
+            document.getElementById("auslaenderAnliegen")?.value.trim() || "";
 
         const ergebnis =
-            document.getElementById(
-                "auslaenderErgebnis"
-            )?.value.trim();
+            document.getElementById("auslaenderErgebnis")?.value.trim() || "";
 
 
-        if (
-            !anliegen ||
-            !ergebnis
-        ) {
-
-            alert(
-                "Bitte fülle alle Felder aus."
-            );
-
-            return;
-
-        }
+        // Ergebnis speichern – auch wenn die Felder leer sind
+        localStorage.setItem(
+            `auslaenderErgebnis_${missionId}`,
+            ergebnis
+        );
 
 
-        if (
-            !websiteWurdeGeoeffnet(
-                missionId
-            )
-        ) {
+        // Website der Ausländerbehörde muss geöffnet worden sein
+        if (!websiteWurdeGeoeffnet(missionId)) {
 
             alert(
                 "Bitte öffne zuerst die Website der Ausländerbehörde."
             );
 
             return;
-
         }
 
     }
-
 
     /* =====================================================
        WOHNUNG
     ===================================================== */
 
-    if (
-        mission.typ === "wohnung"
-    ) {
+    if (mission.typ === "wohnung") {
 
         const aufgabe =
-            document.getElementById(
-                "wohnungAufgabe"
-            )?.value;
-
+            document.getElementById("wohnungAufgabe")?.value || "";
 
         const ergebnis =
-            document.getElementById(
-                "wohnungErgebnis"
-            )?.value.trim();
+            document.getElementById("wohnungErgebnis")?.value.trim() || "";
 
 
-        if (
-            !aufgabe ||
-            !ergebnis
-        ) {
-
-            alert(
-                "Bitte wähle eine Aufgabe aus und beschreibe dein Ergebnis."
-            );
-
+        // Nur prüfen, ob eine Aufgabe ausgewählt wurde
+        if (!aufgabe) {
             return;
-
         }
 
 
-        if (
-            !websiteWurdeGeoeffnet(
-                missionId
-            )
-        ) {
+        // Ergebnis speichern
+        localStorage.setItem(
+            `wohnungErgebnis_${missionId}`,
+            ergebnis
+        );
+
+
+        // SOWON muss vorher geöffnet worden sein
+        if (!websiteWurdeGeoeffnet(missionId)) {
 
             alert(
                 "Bitte öffne zuerst die SOWON-Seite."
             );
 
             return;
-
         }
 
     }
@@ -4145,50 +2110,29 @@ function spezielleMissionAbschliessen(
        JOBCENTER
     ===================================================== */
 
-    if (
-        mission.typ === "jobcenter"
-    ) {
+    if (mission.typ === "jobcenter") {
 
         const task =
-            document.getElementById(
-                "jobTask"
-            )?.value;
-
+            document.getElementById("jobTask")?.value || "";
 
         const result =
-            document.getElementById(
-                "jobResult"
-            )?.value.trim();
+            document.getElementById("jobResult")?.value.trim() || "";
 
 
-        if (
-            !task ||
-            !result
-        ) {
+        // Ergebnis speichern, auch wenn es leer ist
+        localStorage.setItem(
+            `jobResult_${missionId}`,
+            result
+        );
 
-            alert(
-                "Bitte wähle eine Aufgabe und beschreibe dein Ergebnis."
-            );
 
+        // Jobcenter.digital muss geöffnet worden sein
+        if (!websiteWurdeGeoeffnet(missionId)) {
+
+            alert("Bitte öffne zuerst Jobcenter.digital.");
             return;
 
         }
-
-
-        if (
-            !websiteWurdeGeoeffnet(
-                missionId
-            )
-        ) {
-
-            alert(
-                "Bitte öffne zuerst Jobcenter.digital."
-            );
-
-            return;
-
-        }
-
     }
 
 
@@ -4816,7 +2760,17 @@ function aktualisiereHUD() {
 
 }
 
-
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js")
+            .then(() => {
+                console.log("PWA Service Worker aktiviert");
+            })
+            .catch(error => {
+                console.error("Service Worker Fehler:", error);
+            });
+    });
+}
 /* =========================================================
    REWARDS PRÜFEN
 
@@ -4882,14 +2836,6 @@ function pruefeRewards() {
 
     renderRewards();
 
-}
-
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js")
-            .then(() => console.log("Service Worker registriert"))
-            .catch((error) => console.error("Service Worker Fehler:", error));
-    });
 }
 
 
@@ -5315,10 +3261,10 @@ function erzeugeKonfetti(
 
         const farbe =
             farben[
-                Math.floor(
-                    Math.random() *
-                    farben.length
-                )
+            Math.floor(
+                Math.random() *
+                farben.length
+            )
             ];
 
 
@@ -5622,9 +3568,4 @@ if (
     );
 
 }
-</script>
 
-
-</body>
-
-</html>
