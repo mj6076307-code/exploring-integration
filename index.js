@@ -27,7 +27,7 @@
 ========================================================= */
 
 const SUPABASE_URL =
-    "DEINE_SUPABASE_URL";
+    "https://mj6076307-code.github.io/exploring-integration/";
 
 const SUPABASE_PUBLISHABLE_KEY =
     "DEIN_SUPABASE_PUBLISHABLE_KEY";
