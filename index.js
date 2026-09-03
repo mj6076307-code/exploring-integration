@@ -27,7 +27,7 @@
 ========================================================= */
 
 const SUPABASE_URL =
-    "https://xxxxxxxxxxxx.supabase.co";
+    "https://ficgwgdoulrfigqgyrub.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_xxxxxxxxxxxxxxxxx";
