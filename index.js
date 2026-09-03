@@ -68,6 +68,96 @@ const supabaseClient =
         SUPABASE_PUBLISHABLE_KEY
     );
     
+/* =========================================================
+   REGISTRIERUNG
+========================================================= */
+
+async function registrieren() {
+
+    const name =
+        document.getElementById("authName")
+            ?.value.trim();
+
+    const email =
+        document.getElementById("authEmail")
+            ?.value.trim();
+
+    const password =
+        document.getElementById("authPassword")
+            ?.value;
+
+
+    if (!name || !email || !password) {
+
+        zeigeAuthStatus(
+            "Bitte fülle alle Felder aus.",
+            true
+        );
+
+        return;
+    }
+
+
+    if (password.length < 6) {
+
+        zeigeAuthStatus(
+            "Das Passwort muss mindestens 6 Zeichen haben.",
+            true
+        );
+
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.signUp({
+
+            email: email,
+
+            password: password,
+
+            options: {
+
+                data: {
+                    username: name
+                }
+
+            }
+
+        });
+
+
+    if (error) {
+
+        console.error(
+            "Registrierungsfehler:",
+            error
+        );
+
+        zeigeAuthStatus(
+            "❌ " + error.message,
+            true
+        );
+
+        return;
+    }
+
+
+    console.log(
+        "Registrierung:",
+        data
+    );
+
+
+    zeigeAuthStatus(
+        "✅ Registrierung erfolgreich! Bitte prüfe deine E-Mail.",
+        false
+    );
+
+}
 
 const missionen = {
 
