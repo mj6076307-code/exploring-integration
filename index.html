@@ -45,7 +45,97 @@
 
 
 <body>
+```html
+<!-- =========================================================
+     LOGIN / REGISTRIERUNG
+========================================================= -->
 
+<section id="authSection" class="auth-section">
+
+    <div class="auth-box">
+
+        <h2>👋 Willkommen!</h2>
+
+        <p>
+            Melde dich an oder erstelle ein neues Konto.
+        </p>
+
+        <div class="form-group">
+
+            <label for="authName">
+                👤 Benutzername
+            </label>
+
+            <input
+                type="text"
+                id="authName"
+                placeholder="Dein Benutzername"
+                autocomplete="username"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="authEmail">
+                📧 E-Mail
+            </label>
+
+            <input
+                type="email"
+                id="authEmail"
+                placeholder="deine@email.de"
+                autocomplete="email"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="authPassword">
+                🔐 Passwort
+            </label>
+
+            <input
+                type="password"
+                id="authPassword"
+                placeholder="Mindestens 6 Zeichen"
+                autocomplete="current-password"
+            >
+
+        </div>
+
+        <button
+            class="game-button"
+            onclick="registrieren()"
+        >
+            📝 Registrieren
+        </button>
+
+        <button
+            class="game-button"
+            onclick="anmelden()"
+        >
+            🔐 Anmelden
+        </button>
+
+        <button
+            class="game-button"
+            onclick="abmelden()"
+            style="display:none;"
+            id="logoutButton"
+        >
+            🚪 Abmelden
+        </button>
+
+        <div
+            id="authStatus"
+            style="margin-top:15px;"
+        ></div>
+
+    </div>
+
+</section>
 
 <!-- =========================================================
      HEADER
