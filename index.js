@@ -49,6 +49,26 @@
    MISSIONEN
 ========================================================= */
 
+
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+    "DEINE_SUPABASE_URL";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "DEIN_SUPABASE_PUBLISHABLE_KEY";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+    
+
 const missionen = {
 
     integration: [
