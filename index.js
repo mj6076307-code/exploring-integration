@@ -27,10 +27,10 @@
 ========================================================= */
 
 const SUPABASE_URL =
-    "https://mj6076307-code.github.io/exploring-integration/";
+    "https://xxxxxxxxxxxx.supabase.co";
 
 const SUPABASE_PUBLISHABLE_KEY =
-    "DEIN_SUPABASE_PUBLISHABLE_KEY";
+    "sb_publishable_xxxxxxxxxxxxxxxxx";
 
 
 const supabaseClient =
