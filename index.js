@@ -1,54 +1,27 @@
 /* =========================================================
-   index.js
-
-   HINWEIS:
-   Die komplette Spiellogik (Missionen, Punkte, Rewards,
-   Reward-Popup, Konfetti, Musik) befindet sich bereits
-   direkt im <script>-Block innerhalb von index.html.
-
-   Diese Datei existiert nur, damit der
-   <script src="index.js" defer>-Verweis in index.html
-   funktioniert und keinen Fehler im Service-Worker-Cache
-   verursacht.
-
-   Du kannst hier zusätzliche, eigene Skripte ergänzen,
-   falls du künftig etwas außerhalb von index.html
-   anpassen möchtest.
-========================================================= */
-/* =========================================================
-   index.js
-
-   HINWEIS:
-   Die komplette Spiellogik (Missionen, Punkte, Rewards,
-   Reward-Popup, Konfetti, Musik) befindet sich bereits
-   direkt im <script>-Block innerhalb von index.html.
-
-   Diese Datei existiert nur, damit der
-   <script src="index.js" defer>-Verweis in index.html
-   funktioniert und keinen Fehler im Service-Worker-Cache
-   verursacht.
-
-   Du kannst hier zusätzliche, eigene Skripte ergänzen,
-   falls du künftig etwas außerhalb von index.html
-   anpassen möchtest.
-========================================================= */
-/* =========================================================
    EXPLORING INTEGRATION
    Integrations-Navigator München
 
    SYSTEM:
+   - Registrierung
+   - Login
+   - Logout
+   - Benutzername
    - Missionen können immer wieder gespielt werden
    - Nach der letzten Mission beginnt die erste wieder
    - Punkte werden immer weiter gesammelt
    - Rewards werden nur EINMAL freigeschaltet
-   - Mission erscheint nach Abschluss wieder frisch
+
+   WICHTIG:
+   Die eigentliche Punkte-/Missionen-Speicherung bleibt
+   zunächst in localStorage.
+
+   Supabase wird zunächst für die Benutzeranmeldung
+   verwendet.
+
+   Später können Punkte, Aufgaben und Rewards ebenfalls
+   nach Supabase übertragen werden.
 ========================================================= */
-
-
-/* =========================================================
-   MISSIONEN
-========================================================= */
-
 
 
 /* =========================================================
@@ -67,7 +40,13 @@ const supabaseClient =
         SUPABASE_URL,
         SUPABASE_PUBLISHABLE_KEY
     );
-    
+
+
+/* =========================================================
+   AUTHENTIFIZIERUNG
+========================================================= */
+
+
 /* =========================================================
    REGISTRIERUNG
 ========================================================= */
@@ -75,19 +54,28 @@ const supabaseClient =
 async function registrieren() {
 
     const name =
-        document.getElementById("authName")
-            ?.value.trim();
+        document.getElementById(
+            "authName"
+        )?.value.trim();
+
 
     const email =
-        document.getElementById("authEmail")
-            ?.value.trim();
+        document.getElementById(
+            "authEmail"
+        )?.value.trim();
+
 
     const password =
-        document.getElementById("authPassword")
-            ?.value;
+        document.getElementById(
+            "authPassword"
+        )?.value;
 
 
-    if (!name || !email || !password) {
+    if (
+        !name ||
+        !email ||
+        !password
+    ) {
 
         zeigeAuthStatus(
             "Bitte fülle alle Felder aus.",
@@ -95,10 +83,13 @@ async function registrieren() {
         );
 
         return;
+
     }
 
 
-    if (password.length < 6) {
+    if (
+        password.length < 6
+    ) {
 
         zeigeAuthStatus(
             "Das Passwort muss mindestens 6 Zeichen haben.",
@@ -106,58 +97,520 @@ async function registrieren() {
         );
 
         return;
+
     }
 
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient.auth.signUp({
+    try {
 
-            email: email,
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.signUp({
 
-            password: password,
+                email: email,
 
-            options: {
+                password: password,
 
-                data: {
-                    username: name
+                options: {
+
+                    data: {
+                        username: name
+                    }
+
                 }
 
-            }
-
-        });
+            });
 
 
-    if (error) {
+        if (error) {
+
+            console.error(
+                "Registrierungsfehler:",
+                error
+            );
+
+            zeigeAuthStatus(
+                "❌ " + error.message,
+                true
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            "Registrierung erfolgreich:",
+            data
+        );
+
+
+        /*
+           Wenn E-Mail-Bestätigung aktiviert ist,
+           gibt es zunächst noch keine Session.
+        */
+
+        if (
+            data.session
+        ) {
+
+            zeigeAuthStatus(
+                "✅ Registrierung erfolgreich! Du bist jetzt angemeldet.",
+                false
+            );
+
+        }
+
+        else {
+
+            zeigeAuthStatus(
+                "✅ Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.",
+                false
+            );
+
+        }
+
+    }
+
+    catch (fehler) {
 
         console.error(
             "Registrierungsfehler:",
-            error
+            fehler
         );
 
         zeigeAuthStatus(
-            "❌ " + error.message,
+            "❌ Bei der Registrierung ist ein Fehler aufgetreten.",
+            true
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function anmelden() {
+
+    const email =
+        document.getElementById(
+            "authEmail"
+        )?.value.trim();
+
+
+    const password =
+        document.getElementById(
+            "authPassword"
+        )?.value;
+
+
+    if (
+        !email ||
+        !password
+    ) {
+
+        zeigeAuthStatus(
+            "Bitte gib E-Mail und Passwort ein.",
             true
         );
 
         return;
+
     }
 
 
-    console.log(
-        "Registrierung:",
-        data
-    );
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.signInWithPassword({
+
+                email: email,
+
+                password: password
+
+            });
 
 
-    zeigeAuthStatus(
-        "✅ Registrierung erfolgreich! Bitte prüfe deine E-Mail.",
-        false
-    );
+        if (error) {
+
+            console.error(
+                "Login-Fehler:",
+                error
+            );
+
+            zeigeAuthStatus(
+                "❌ " + error.message,
+                true
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            "Login erfolgreich:",
+            data
+        );
+
+
+        zeigeAuthStatus(
+            "✅ Erfolgreich angemeldet!",
+            false
+        );
+
+
+        aktualisiereAuthAnzeige(
+            data.user
+        );
+
+    }
+
+    catch (fehler) {
+
+        console.error(
+            "Login-Fehler:",
+            fehler
+        );
+
+        zeigeAuthStatus(
+            "❌ Beim Anmelden ist ein Fehler aufgetreten.",
+            true
+        );
+
+    }
 
 }
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function abmelden() {
+
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient.auth.signOut();
+
+
+        if (error) {
+
+            console.error(
+                "Logout-Fehler:",
+                error
+            );
+
+            return;
+
+        }
+
+
+        console.log(
+            "Benutzer abgemeldet."
+        );
+
+
+        aktualisiereAuthAnzeige(
+            null
+        );
+
+
+        zeigeAuthStatus(
+            "👋 Du wurdest erfolgreich abgemeldet.",
+            false
+        );
+
+    }
+
+    catch (fehler) {
+
+        console.error(
+            "Logout-Fehler:",
+            fehler
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   AUTH STATUS ANZEIGEN
+========================================================= */
+
+function zeigeAuthStatus(
+    nachricht,
+    fehler = false
+) {
+
+    const status =
+        document.getElementById(
+            "authStatus"
+        );
+
+
+    if (!status) {
+        return;
+    }
+
+
+    status.textContent =
+        nachricht;
+
+
+    if (fehler) {
+
+        status.style.color =
+            "#dc2626";
+
+    }
+
+    else {
+
+        status.style.color =
+            "#16a34a";
+
+    }
+
+}
+
+
+/* =========================================================
+   AUTH-ANZEIGE AKTUALISIEREN
+========================================================= */
+
+function aktualisiereAuthAnzeige(
+    user
+) {
+
+    const authSection =
+        document.getElementById(
+            "authSection"
+        );
+
+
+    const logoutButton =
+        document.getElementById(
+            "logoutButton"
+        );
+
+
+    const authUser =
+        document.getElementById(
+            "authUser"
+        );
+
+
+    const authNameInput =
+        document.getElementById(
+            "authName"
+        );
+
+
+    if (user) {
+
+        /*
+           Benutzer ist angemeldet
+        */
+
+        if (authSection) {
+
+            authSection.style.display =
+                "none";
+
+        }
+
+
+        if (logoutButton) {
+
+            logoutButton.style.display =
+                "block";
+
+        }
+
+
+        if (authUser) {
+
+            const username =
+                user.user_metadata?.username ||
+                user.email ||
+                "Benutzer";
+
+
+            authUser.textContent =
+                "👤 " + username;
+
+            authUser.style.display =
+                "block";
+
+        }
+
+    }
+
+    else {
+
+        /*
+           Benutzer ist nicht angemeldet
+        */
+
+        if (authSection) {
+
+            authSection.style.display =
+                "block";
+
+        }
+
+
+        if (logoutButton) {
+
+            logoutButton.style.display =
+                "none";
+
+        }
+
+
+        if (authUser) {
+
+            authUser.textContent =
+                "";
+
+            authUser.style.display =
+                "none";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   AUTH BEIM START PRÜFEN
+========================================================= */
+
+async function authBeimStart() {
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.getSession();
+
+
+        if (error) {
+
+            console.error(
+                "Session-Fehler:",
+                error
+            );
+
+            return;
+
+        }
+
+
+        const session =
+            data.session;
+
+
+        if (session) {
+
+            console.log(
+                "Bestehende Anmeldung gefunden."
+            );
+
+
+            aktualisiereAuthAnzeige(
+                session.user
+            );
+
+        }
+
+        else {
+
+            console.log(
+                "Kein Benutzer angemeldet."
+            );
+
+
+            aktualisiereAuthAnzeige(
+                null
+            );
+
+        }
+
+
+        /*
+           Reagiert auf:
+
+           - Login
+           - Logout
+           - Registrierung
+           - Session-Änderungen
+        */
+
+        supabaseClient.auth.onAuthStateChange(
+            (
+                event,
+                session
+            ) => {
+
+                console.log(
+                    "Auth Event:",
+                    event
+                );
+
+
+                if (session) {
+
+                    aktualisiereAuthAnzeige(
+                        session.user
+                    );
+
+                }
+
+                else {
+
+                    aktualisiereAuthAnzeige(
+                        null
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+    catch (fehler) {
+
+        console.error(
+            "Auth Startfehler:",
+            fehler
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MISSIONEN
+========================================================= */
 
 const missionen = {
 
@@ -333,16 +786,6 @@ const missionen = {
             typ: "text"
         }
 
-        /* ... {
-            id: "auslaender-4",
-            titel: "Bereite deinen nächsten Behördengang vor",
-            beschreibung:
-                "Finde heraus, welche Unterlagen du benötigst.",
-            punkte: 20,
-            icon: "📁",
-            typ: "text"
-        }*/
-
     ],
 
 
@@ -367,6 +810,7 @@ const missionen = {
             icon: "📄",
             typ: "text"
         }
+
     ],
 
 
@@ -617,9 +1061,6 @@ const sozialbuergerhaeuser = [
 
 /* =========================================================
    REWARDS
-
-   WICHTIG:
-   Jeder Reward wird nur EINMAL freigeschaltet.
 ========================================================= */
 
 const rewards = [
@@ -677,38 +1118,20 @@ const rewards = [
 ========================================================= */
 
 let punkte = parseInt(
-    localStorage.getItem("integrations_punkte") || "0"
+    localStorage.getItem(
+        "integrations_punkte"
+    ) || "0"
 );
 
 
-/*
-   Anzahl aller abgeschlossenen Missionen.
-
-   WICHTIG:
-   Hier werden Missionen NICHT dauerhaft gespeichert,
-   weil sie wiederholt werden dürfen.
-*/
-let erledigteMissionen = parseInt(
-    localStorage.getItem("integrations_erledigte_anzahl") || "0"
-);
+let erledigteMissionen =
+    parseInt(
+        localStorage.getItem(
+            "integrations_erledigte_anzahl"
+        ) || "0"
+    );
 
 
-/*
-   Welche Mission kommt als Nächstes?
-
-   Beispiel:
-
-   integration = 0
-   → Mission 1
-
-   nach Abschluss:
-   integration = 1
-   → Mission 2
-
-   nach Mission 3:
-   integration = 0
-   → wieder Mission 1
-*/
 let missionsPositionen =
     JSON.parse(
         localStorage.getItem(
@@ -718,18 +1141,22 @@ let missionsPositionen =
 
 
 /* =========================================================
-   POSITION EINER KATEGORIE LADEN
+   POSITION LADEN
 ========================================================= */
 
-function holeMissionsPosition(kategorie) {
+function holeMissionsPosition(
+    kategorie
+) {
 
     if (
-        typeof missionsPositionen[kategorie] !== "number"
+        typeof missionsPositionen[kategorie] !==
+        "number"
     ) {
 
         missionsPositionen[kategorie] = 0;
 
     }
+
 
     return missionsPositionen[kategorie];
 
@@ -743,10 +1170,13 @@ function holeMissionsPosition(kategorie) {
 function speichereMissionsPositionen() {
 
     localStorage.setItem(
+
         "integrations_missions_positionen",
+
         JSON.stringify(
             missionsPositionen
         )
+
     );
 
 }
@@ -754,19 +1184,15 @@ function speichereMissionsPositionen() {
 
 /* =========================================================
    NÄCHSTE MISSION
-
-   Anders als vorher:
-   Missionen werden NICHT mehr nach "erledigt"
-   gefiltert.
-
-   Stattdessen läuft die Position immer weiter:
-   1 → 2 → 3 → 1 → 2 → 3 ...
 ========================================================= */
 
-function naechsteMission(kategorie) {
+function naechsteMission(
+    kategorie
+) {
 
     const liste =
         missionen[kategorie];
+
 
     if (
         !liste ||
@@ -777,16 +1203,12 @@ function naechsteMission(kategorie) {
 
     }
 
+
     let position =
         holeMissionsPosition(
             kategorie
         );
 
-
-    /*
-       Falls die Position außerhalb
-       der Liste liegt, wieder bei 0 anfangen.
-    */
 
     if (
         position >= liste.length
@@ -806,30 +1228,6 @@ function naechsteMission(kategorie) {
 
 }
 
-function zeigeKategorie(kategorie) {
-
-    // Themenbereich anzeigen
-    // dein bisheriger Code bleibt hier
-
-    // Menü auf dem Handy verstecken
-    if (window.innerWidth <= 768) {
-        document.querySelector(".categories").classList.add("menu-hidden");
-        document.querySelector("#backButton").classList.add("show");
-    }
-}
-
-function zeigeStartseite() {
-
-    // Menü wieder anzeigen
-    document.querySelector(".categories").classList.remove("menu-hidden");
-
-    // Zurück-Button verstecken
-    document.querySelector("#backButton").classList.remove("show");
-
-    // Themenbereich schließen
-    // falls du dafür bereits eine Funktion hast,
-    // kannst du sie hier verwenden
-}
 
 /* =========================================================
    KATEGORIE ANZEIGEN
@@ -904,13 +1302,98 @@ function zeigeKategorie(
         () => {
 
             ziel.scrollIntoView({
+
                 behavior: "smooth",
+
                 block: "start"
+
             });
 
         },
         50
     );
+
+}
+
+
+/* =========================================================
+   STARTSEITE
+========================================================= */
+
+function zeigeStartseite() {
+
+    document
+        .querySelectorAll(
+            ".category-content"
+        )
+        .forEach(
+            content => {
+
+                content.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            ".category-card"
+        )
+        .forEach(
+            card => {
+
+                card.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    const integration =
+        document.getElementById(
+            "integration"
+        );
+
+
+    const ersteKarte =
+        document.querySelector(
+            ".category-card"
+        );
+
+
+    if (integration) {
+
+        integration.classList.add(
+            "active"
+        );
+
+    }
+
+
+    if (ersteKarte) {
+
+        ersteKarte.classList.add(
+            "active"
+        );
+
+    }
+
+
+    renderKategorie(
+        "integration"
+    );
+
+
+    window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+    });
 
 }
 
@@ -944,6 +1427,7 @@ function renderKategorie(
     if (!mission) {
 
         container.innerHTML = `
+
             <div class="mission">
 
                 <div style="
@@ -965,6 +1449,7 @@ function renderKategorie(
                 </div>
 
             </div>
+
         `;
 
         return;
@@ -1345,37 +1830,15 @@ function missionHTML(
                 <label>
                     🎯 Was hast du gesucht?
                 </label>
-                <select id="jobTask">
+
+                <select id="auslaenderAnliegen">
 
                     <option value="">
                         Bitte auswählen
                     </option>
 
                     <option>
-                        🔐 Anmeldung / Registrierung
-                    </option>
-
-                    <option>
-                        ✉️ Nachricht geschrieben
-                    </option>
-
-                    <option>
-                        📄 Antrag gesucht
-                    </option>
-
-                    <option>
-                        📎 Unterlagen hochgeladen
-                    </option>
-
-                    <option>
-                        📅 Termin vereinbart
-                    </option>
-                          <option>
                         Kindernachzug aus dem Ausland
-                    </option>
-
-                    <option>
-                      Deutsche oder Ausländer*innen, die eine Aufenthaltserlaubnis haben, können ihre ausländischen, minderjährigen und ledigen Kinder nachziehen lassen.
                     </option>
 
                     <option>
@@ -1383,39 +1846,28 @@ function missionHTML(
                     </option>
 
                     <option>
-                        📎 Unterlagen hochgeladen
+                        Asyl beantragen
                     </option>
 
                     <option>
-                        📅 Termin vereinbart
+                        Niederlassungserlaubnis
                     </option>
+
                     <option>
-                    Asyl beantragen
+                        Aufenthaltserlaubnis für Kriegsflüchtlinge aus der Ukraine beantragen
                     </option>
+
                     <option>
-                    Niederlassungserlaubnis
-                    </option>
-                     <option>
-                   Aufenthaltserlaubnis für Kriegsflüchtlinge aus der Ukraine beantragen
-                    </option>
-                     <option>
-                    Aufenthaltserlaubnis für Flüchtlinge und Asylberechtigte
-                    </option>
-                     
-                <option>
-                    Aufenthaltserlaubnis für subsidiär Schutzberechtigte
+                        Aufenthaltserlaubnis für Flüchtlinge und Asylberechtigte
                     </option>
 
-                <option>
-                    Aufenthaltserlaubnis für Flüchtlinge und Asylberechtigte
+                    <option>
+                        Aufenthaltserlaubnis für subsidiär Schutzberechtigte
                     </option>
 
-                <option> Aufenthaltserlaubnis aufgrund einer Aufnahmezusage des Bundes</option>
-                     <option>Aufenthaltserlaubnis für humanitären Aufenthalt ohne Schutzstatus</option>
-                       <option>Aufenthaltserlaubnis für gut integrierte Jugendliche und junge Volljährige beantragen</option
-                       <option>Aufenthaltserlaubnis bei nachhaltiger Integration beantragen </option
-
-  <option>Arbeitserlaubnis beantragen </option>
+                    <option>
+                        Arbeitserlaubnis beantragen
+                    </option>
 
                 </select>
 
@@ -1426,61 +1878,12 @@ function missionHTML(
                 <label>
                     📋 Was hast du gefunden?
                 </label>
-                <select id="jobTask">
-                
-                    option value="">
-                        Bitte auswählen
-                    </option>
 
-                    <option>
-                        Kindernachzug aus dem Ausland
-                    </option>
-
-                    <option>
-                      Deutsche oder Ausländer*innen, die eine Aufenthaltserlaubnis haben, können ihre ausländischen, minderjährigen und ledigen Kinder nachziehen lassen.
-                    </option>
-
-                    <option>
-                        Aufenthaltserlaubnis – Qualifizierte Geduldete
-                    </option>
-
-                    <option>
-                        📎 Unterlagen hochgeladen
-                    </option>
-
-                    <option>
-                        📅 Termin vereinbart
-                    </option>
-                    <option>
-                    Asyl beantragen
-                    </option>
-                    <option>
-                    Niederlassungserlaubnis
-                    </option>
-                     <option>
-                   Aufenthaltserlaubnis für Kriegsflüchtlinge aus der Ukraine beantragen
-                    </option>
-                     <option>
-                    Aufenthaltserlaubnis für Flüchtlinge und Asylberechtigte
-                    </option>
-                     
-                <option>
-                    Aufenthaltserlaubnis für subsidiär Schutzberechtigte
-                    </option>
-
-                <option>
-                    Aufenthaltserlaubnis für Flüchtlinge und Asylberechtigte
-                    </option>
-
-                <option> Aufenthaltserlaubnis aufgrund einer Aufnahmezusage des Bundes</option>
-                     <option>Aufenthaltserlaubnis für humanitären Aufenthalt ohne Schutzstatus</option>
-                       <option>Aufenthaltserlaubnis für gut integrierte Jugendliche und junge Volljährige beantragen</option
-                       <option>Aufenthaltserlaubnis bei nachhaltiger Integration beantragen </option
-
-  <option>Arbeitserlaubnis beantragen </option>
-
-                </select>
-                
+                <textarea
+                    id="auslaenderErgebnis"
+                    rows="4"
+                    placeholder="Beschreibe kurz, was du gefunden hast..."
+                ></textarea>
 
             </div>
 
@@ -1768,10 +2171,6 @@ function missionHTML(
     }
 
 
-    /* =====================================================
-       KOMPLETTE MISSION
-    ===================================================== */
-
     return `
 
         <div
@@ -1889,12 +2288,16 @@ function websiteWurdeGeoeffnet(
     missionId
 ) {
 
-    return localStorage.getItem(
+    return (
 
-        "website_geoeffnet_" +
-        missionId
+        localStorage.getItem(
 
-    ) === "true";
+            "website_geoeffnet_" +
+            missionId
+
+        ) === "true"
+
+    );
 
 }
 
@@ -2166,68 +2569,133 @@ function spezielleMissionAbschliessen(
        AUSLÄNDERBEHÖRDE
     ===================================================== */
 
-    if (mission.typ === "auslaender") {
+    if (
+        mission.typ === "auslaender"
+    ) {
 
         const anliegen =
-            document.getElementById("auslaenderAnliegen")?.value.trim() || "";
+            document.getElementById(
+                "auslaenderAnliegen"
+            )?.value || "";
+
 
         const ergebnis =
-            document.getElementById("auslaenderErgebnis")?.value.trim() || "";
+            document.getElementById(
+                "auslaenderErgebnis"
+            )?.value.trim() || "";
 
 
-        // Ergebnis speichern – auch wenn die Felder leer sind
+        if (!anliegen) {
+
+            alert(
+                "Bitte wähle zuerst dein Anliegen aus."
+            );
+
+            return;
+
+        }
+
+
+        if (!ergebnis) {
+
+            alert(
+                "Bitte beschreibe kurz, was du gefunden hast."
+            );
+
+            return;
+
+        }
+
+
         localStorage.setItem(
+
             `auslaenderErgebnis_${missionId}`,
+
             ergebnis
+
         );
 
 
-        // Website der Ausländerbehörde muss geöffnet worden sein
-        if (!websiteWurdeGeoeffnet(missionId)) {
+        if (
+            !websiteWurdeGeoeffnet(
+                missionId
+            )
+        ) {
 
             alert(
                 "Bitte öffne zuerst die Website der Ausländerbehörde."
             );
 
             return;
+
         }
 
     }
+
 
     /* =====================================================
        WOHNUNG
     ===================================================== */
 
-    if (mission.typ === "wohnung") {
+    if (
+        mission.typ === "wohnung"
+    ) {
 
         const aufgabe =
-            document.getElementById("wohnungAufgabe")?.value || "";
+            document.getElementById(
+                "wohnungAufgabe"
+            )?.value || "";
+
 
         const ergebnis =
-            document.getElementById("wohnungErgebnis")?.value.trim() || "";
+            document.getElementById(
+                "wohnungErgebnis"
+            )?.value.trim() || "";
 
 
-        // Nur prüfen, ob eine Aufgabe ausgewählt wurde
         if (!aufgabe) {
+
+            alert(
+                "Bitte wähle zuerst eine Aufgabe aus."
+            );
+
             return;
+
         }
 
 
-        // Ergebnis speichern
+        if (!ergebnis) {
+
+            alert(
+                "Bitte beschreibe kurz dein Ergebnis."
+            );
+
+            return;
+
+        }
+
+
         localStorage.setItem(
+
             `wohnungErgebnis_${missionId}`,
+
             ergebnis
+
         );
 
 
-        // SOWON muss vorher geöffnet worden sein
-        if (!websiteWurdeGeoeffnet(missionId)) {
+        if (
+            !websiteWurdeGeoeffnet(
+                missionId
+            )
+        ) {
 
             alert(
                 "Bitte öffne zuerst die SOWON-Seite."
             );
 
             return;
+
         }
 
     }
@@ -2237,29 +2705,67 @@ function spezielleMissionAbschliessen(
        JOBCENTER
     ===================================================== */
 
-    if (mission.typ === "jobcenter") {
+    if (
+        mission.typ === "jobcenter"
+    ) {
 
         const task =
-            document.getElementById("jobTask")?.value || "";
+            document.getElementById(
+                "jobTask"
+            )?.value || "";
+
 
         const result =
-            document.getElementById("jobResult")?.value.trim() || "";
+            document.getElementById(
+                "jobResult"
+            )?.value.trim() || "";
 
 
-        // Ergebnis speichern, auch wenn es leer ist
-        localStorage.setItem(
-            `jobResult_${missionId}`,
-            result
-        );
+        if (!task) {
 
+            alert(
+                "Bitte wähle zuerst eine Aufgabe aus."
+            );
 
-        // Jobcenter.digital muss geöffnet worden sein
-        if (!websiteWurdeGeoeffnet(missionId)) {
-
-            alert("Bitte öffne zuerst Jobcenter.digital.");
             return;
 
         }
+
+
+        if (!result) {
+
+            alert(
+                "Bitte beschreibe kurz dein Ergebnis."
+            );
+
+            return;
+
+        }
+
+
+        localStorage.setItem(
+
+            `jobResult_${missionId}`,
+
+            result
+
+        );
+
+
+        if (
+            !websiteWurdeGeoeffnet(
+                missionId
+            )
+        ) {
+
+            alert(
+                "Bitte öffne zuerst Jobcenter.digital."
+            );
+
+            return;
+
+        }
+
     }
 
 
@@ -2335,9 +2841,11 @@ function findeMission(
 
         const gefunden =
             missionen[kategorie].find(
+
                 mission =>
                     mission.id ===
                     missionId
+
             );
 
 
@@ -2356,7 +2864,7 @@ function findeMission(
 
 
 /* =========================================================
-   KATEGORIE EINER MISSION FINDEN
+   KATEGORIE FINDEN
 ========================================================= */
 
 function findeKategorie(
@@ -2369,9 +2877,11 @@ function findeKategorie(
 
         if (
             missionen[kategorie].some(
+
                 mission =>
                     mission.id ===
                     missionId
+
             )
         ) {
 
@@ -2389,18 +2899,6 @@ function findeKategorie(
 
 /* =========================================================
    MISSION ABSCHLIESSEN
-
-   DAS IST DER WICHTIGSTE TEIL.
-
-   Nach Abschluss:
-
-   1. Punkte hinzufügen
-   2. Gesamtzahl erledigter Missionen erhöhen
-   3. Position um 1 erhöhen
-   4. Nach letzter Mission wieder auf 0
-   5. Website-Status löschen
-   6. Erfolg anzeigen
-   7. Danach neue Mission frisch rendern
 ========================================================= */
 
 function missionAbschliessen(
@@ -2430,10 +2928,7 @@ function missionAbschliessen(
 
 
     /* =====================================================
-       PUNKTE DAZURECHNEN
-
-       WICHTIG:
-       Die Mission darf wiederholt Punkte geben.
+       PUNKTE
     ===================================================== */
 
     punkte +=
@@ -2441,7 +2936,7 @@ function missionAbschliessen(
 
 
     /* =====================================================
-       ERLEDIGTE MISSIONEN ZÄHLEN
+       ERLEDIGTE MISSIONEN
     ===================================================== */
 
     erledigteMissionen++;
@@ -2449,17 +2944,6 @@ function missionAbschliessen(
 
     /* =====================================================
        POSITION ERHÖHEN
-
-       Beispiel:
-
-       Mission 1 = Position 0
-       Mission 2 = Position 1
-       Mission 3 = Position 2
-
-       danach:
-
-       Position 0
-       → Mission 1 wieder
     ===================================================== */
 
     let position =
@@ -2476,7 +2960,8 @@ function missionAbschliessen(
 
 
     if (
-        position >= liste.length
+        position >=
+        liste.length
     ) {
 
         position = 0;
@@ -2493,14 +2978,20 @@ function missionAbschliessen(
     ===================================================== */
 
     localStorage.setItem(
+
         "integrations_punkte",
+
         punkte
+
     );
 
 
     localStorage.setItem(
+
         "integrations_erledigte_anzahl",
+
         erledigteMissionen
+
     );
 
 
@@ -2508,15 +2999,14 @@ function missionAbschliessen(
 
 
     /* =====================================================
-       WEBSITE FÜR DIESE MISSION ZURÜCKSETZEN
-
-       Dadurch muss bei der nächsten Runde
-       die Website wieder neu geöffnet werden.
+       WEBSITE ZURÜCKSETZEN
     ===================================================== */
 
     localStorage.removeItem(
+
         "website_geoeffnet_" +
         missionId
+
     );
 
 
@@ -2529,7 +3019,9 @@ function missionAbschliessen(
     ) {
 
         localStorage.removeItem(
+
             "sozialbuergerhaus_gefunden"
+
         );
 
     }
@@ -2543,7 +3035,7 @@ function missionAbschliessen(
 
 
     /* =====================================================
-       REWARDS PRÜFEN
+       REWARDS
     ===================================================== */
 
     pruefeRewards();
@@ -2555,8 +3047,10 @@ function missionAbschliessen(
 
     const container =
         document.getElementById(
+
             "missionContainer-" +
             kategorie
+
         );
 
 
@@ -2619,19 +3113,6 @@ function missionAbschliessen(
     `;
 
 
-    /* =====================================================
-       NEUE MISSION
-
-       Nach 1,8 Sekunden wird die neue Mission
-       komplett neu aufgebaut.
-
-       Dadurch ist sie wieder:
-       - geschlossen
-       - leere Felder
-       - neuer Start-Button
-       - wie beim ersten Mal
-    ===================================================== */
-
     setTimeout(
         () => {
 
@@ -2647,19 +3128,12 @@ function missionAbschliessen(
 
 
 /* =========================================================
-   NÄCHSTE MISSION ANZEIGEN
+   NÄCHSTE MISSION
 ========================================================= */
 
 function naechsteMissionAnzeigen(
     kategorie
 ) {
-
-    /*
-       Wichtig:
-
-       renderKategorie() holt automatisch
-       die neue Position.
-    */
 
     renderKategorie(
         kategorie
@@ -2668,8 +3142,10 @@ function naechsteMissionAnzeigen(
 
     const container =
         document.getElementById(
+
             "missionContainer-" +
             kategorie
+
         );
 
 
@@ -2775,10 +3251,12 @@ function sozialPLZSuche() {
 
     const gefunden =
         sozialbuergerhaeuser.find(
+
             haus =>
                 haus.plz.includes(
                     plz
                 )
+
         );
 
 
@@ -2811,10 +3289,13 @@ function sozialPLZSuche() {
 
 
         localStorage.setItem(
+
             "sozialbuergerhaus_gefunden",
+
             JSON.stringify(
                 gefunden
             )
+
         );
 
     }
@@ -2830,7 +3311,9 @@ function sozialPLZSuche() {
 
 
         localStorage.removeItem(
+
             "sozialbuergerhaus_gefunden"
+
         );
 
     }
@@ -2839,7 +3322,7 @@ function sozialPLZSuche() {
 
 
 /* =========================================================
-   HUD AKTUALISIEREN
+   HUD
 ========================================================= */
 
 function aktualisiereHUD() {
@@ -2887,27 +3370,9 @@ function aktualisiereHUD() {
 
 }
 
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./service-worker.js")
-            .then(() => {
-                console.log("PWA Service Worker aktiviert");
-            })
-            .catch(error => {
-                console.error("Service Worker Fehler:", error);
-            });
-    });
-}
+
 /* =========================================================
    REWARDS PRÜFEN
-
-   WICHTIG:
-
-   Jeder Reward wird nur EIN EINZIGES MAL
-   freigeschaltet.
-
-   Auch wenn der Benutzer danach weiter Punkte
-   sammelt, erscheint derselbe Reward nicht nochmal.
 ========================================================= */
 
 function pruefeRewards() {
@@ -2935,19 +3400,14 @@ function pruefeRewards() {
                     !bereitsErreicht
                 ) {
 
-                    /*
-                       Reward dauerhaft speichern
-                    */
-
                     localStorage.setItem(
+
                         rewardKey,
+
                         "true"
+
                     );
 
-
-                    /*
-                       Reward anzeigen
-                    */
 
                     zeigeNeuenReward(
                         reward
@@ -2988,10 +3448,14 @@ function renderRewards() {
             reward => {
 
                 return (
+
                     localStorage.getItem(
+
                         "reward_erreicht_" +
                         reward.id
+
                     ) === "true"
+
                 );
 
             }
@@ -3008,11 +3472,6 @@ function renderRewards() {
 
     }
 
-
-    /*
-       Der zuletzt erreichte Reward
-       wird angezeigt.
-    */
 
     const reward =
         erreichteRewards
@@ -3068,9 +3527,7 @@ function zeigeNeuenReward(
 
     renderRewards();
 
-
     spieleRewardMusik();
-
 
     zeigeRewardModal(
         reward
@@ -3080,11 +3537,7 @@ function zeigeNeuenReward(
 
 
 /* =========================================================
-   REWARD-MUSIK (Web Audio API)
-
-   Es wird keine externe Audiodatei benötigt:
-   Eine kleine Fanfare wird direkt im Browser
-   aus einzelnen Tönen erzeugt.
+   REWARD MUSIK
 ========================================================= */
 
 function spieleRewardMusik() {
@@ -3105,18 +3558,31 @@ function spieleRewardMusik() {
             new AudioContextKlasse();
 
 
-        /*
-           Fanfare-Melodie:
-           kleine aufsteigende Tonfolge
-           + ein heller Schlussakkord
-        */
-
         const melodie = [
 
-            { frequenz: 523.25, start: 0.00, dauer: 0.14 },  // C5
-            { frequenz: 659.25, start: 0.14, dauer: 0.14 },  // E5
-            { frequenz: 783.99, start: 0.28, dauer: 0.14 },  // G5
-            { frequenz: 1046.50, start: 0.42, dauer: 0.30 }, // C6
+            {
+                frequenz: 523.25,
+                start: 0.00,
+                dauer: 0.14
+            },
+
+            {
+                frequenz: 659.25,
+                start: 0.14,
+                dauer: 0.14
+            },
+
+            {
+                frequenz: 783.99,
+                start: 0.28,
+                dauer: 0.14
+            },
+
+            {
+                frequenz: 1046.50,
+                start: 0.42,
+                dauer: 0.30
+            }
 
         ];
 
@@ -3125,39 +3591,50 @@ function spieleRewardMusik() {
             ton => {
 
                 spieleTon(
+
                     audioContext,
+
                     ton.frequenz,
-                    audioContext.currentTime + ton.start,
+
+                    audioContext.currentTime +
+                    ton.start,
+
                     ton.dauer,
+
                     0.22
+
                 );
 
             }
         );
 
 
-        /*
-           Heller Schlussakkord
-           (C6 + E6 + G6 zusammen)
-        */
-
         const akkordStart =
-            audioContext.currentTime + 0.75;
+            audioContext.currentTime +
+            0.75;
 
 
         [
+
             1046.50,
             1318.51,
             1567.98
+
         ].forEach(
             frequenz => {
 
                 spieleTon(
+
                     audioContext,
+
                     frequenz,
+
                     akkordStart,
+
                     0.9,
+
                     0.15
+
                 );
 
             }
@@ -3168,8 +3645,11 @@ function spieleRewardMusik() {
     catch (fehler) {
 
         console.warn(
+
             "Reward-Musik konnte nicht abgespielt werden:",
+
             fehler
+
         );
 
     }
@@ -3177,10 +3657,9 @@ function spieleRewardMusik() {
 }
 
 
-/*
-   Erzeugt einen einzelnen Ton mit
-   sanftem Ein- und Ausklingen (kein Knacken).
-*/
+/* =========================================================
+   EINZELNEN TON SPIELEN
+========================================================= */
 
 function spieleTon(
     audioContext,
@@ -3198,7 +3677,9 @@ function spieleTon(
         audioContext.createGain();
 
 
-    oszillator.type = "triangle";
+    oszillator.type =
+        "triangle";
+
 
     oszillator.frequency.value =
         frequenz;
@@ -3209,35 +3690,53 @@ function spieleTon(
         startZeit
     );
 
+
     gain.gain.linearRampToValueAtTime(
+
         lautstaerke,
+
         startZeit + 0.03
+
     );
+
 
     gain.gain.exponentialRampToValueAtTime(
+
         0.0001,
+
         startZeit + dauer
+
     );
 
 
-    oszillator.connect(gain);
+    oszillator.connect(
+        gain
+    );
+
 
     gain.connect(
         audioContext.destination
     );
 
 
-    oszillator.start(startZeit);
+    oszillator.start(
+        startZeit
+    );
+
 
     oszillator.stop(
-        startZeit + dauer + 0.05
+
+        startZeit +
+        dauer +
+        0.05
+
     );
 
 }
 
 
 /* =========================================================
-   GROSSES REWARD-MODAL ANZEIGEN
+   REWARD MODAL
 ========================================================= */
 
 function zeigeRewardModal(
@@ -3316,7 +3815,7 @@ function zeigeRewardModal(
 
 
 /* =========================================================
-   REWARD-MODAL SCHLIESSEN
+   REWARD MODAL SCHLIESSEN
 ========================================================= */
 
 function schliesseRewardModal() {
@@ -3350,7 +3849,7 @@ function schliesseRewardModal() {
 
 
 /* =========================================================
-   KONFETTI ERZEUGEN
+   KONFETTI
 ========================================================= */
 
 function erzeugeKonfetti(
@@ -3358,12 +3857,14 @@ function erzeugeKonfetti(
 ) {
 
     const farben = [
+
         "#2563eb",
         "#f59e0b",
         "#16a34a",
         "#dc2626",
         "#7c3aed",
         "#f472b6"
+
     ];
 
 
@@ -3388,10 +3889,10 @@ function erzeugeKonfetti(
 
         const farbe =
             farben[
-            Math.floor(
-                Math.random() *
-                farben.length
-            )
+                Math.floor(
+                    Math.random() *
+                    farben.length
+                )
             ];
 
 
@@ -3421,8 +3922,14 @@ function erzeugeKonfetti(
 
 
         stueck.style.setProperty(
+
             "--drift",
-            (Math.random() * 160 - 80) + "px"
+
+            (
+                Math.random() * 160 -
+                80
+            ) + "px"
+
         );
 
 
@@ -3441,18 +3948,19 @@ function erzeugeKonfetti(
         );
 
 
-        /*
-           Konfetti-Element nach Ablauf
-           wieder entfernen (Aufräumen).
-        */
-
         setTimeout(
+
             () => {
 
                 stueck.remove();
 
             },
-            (verzoegerung + laufzeit) * 1000 + 200
+
+            (
+                verzoegerung +
+                laufzeit
+            ) * 1000 + 200
+
         );
 
     }
@@ -3472,6 +3980,7 @@ function spielZuruecksetzen() {
             "Möchtest du wirklich den gesamten Fortschritt löschen?\n\n" +
 
             "Dabei werden Punkte, erledigte Aufgaben " +
+
             "und Rewards zurückgesetzt."
 
         );
@@ -3482,82 +3991,60 @@ function spielZuruecksetzen() {
     }
 
 
-    /* =====================================================
-       PUNKTE
-    ===================================================== */
-
     localStorage.removeItem(
         "integrations_punkte"
     );
 
-
-    /* =====================================================
-       ERLEDIGTE MISSIONEN
-    ===================================================== */
 
     localStorage.removeItem(
         "integrations_erledigte_anzahl"
     );
 
 
-    /* =====================================================
-       MISSIONS-POSITIONEN
-    ===================================================== */
-
     localStorage.removeItem(
         "integrations_missions_positionen"
     );
 
-
-    /* =====================================================
-       SOZIALBÜRGERHAUS
-    ===================================================== */
 
     localStorage.removeItem(
         "sozialbuergerhaus_gefunden"
     );
 
 
-    /* =====================================================
-       REWARDS
-    ===================================================== */
-
     rewards.forEach(
         reward => {
 
             localStorage.removeItem(
+
                 "reward_erreicht_" +
                 reward.id
+
             );
 
         }
     );
 
 
-    /* =====================================================
-       GEÖFFNETE WEBSITES
-    ===================================================== */
-
     Object.keys(
         localStorage
     )
         .filter(
+
             key =>
                 key.startsWith(
                     "website_geoeffnet_"
                 )
+
         )
         .forEach(
+
             key =>
                 localStorage.removeItem(
                     key
                 )
+
         );
 
-
-    /* =====================================================
-       VARIABLEN ZURÜCKSETZEN
-    ===================================================== */
 
     punkte = 0;
 
@@ -3566,23 +4053,10 @@ function spielZuruecksetzen() {
     missionsPositionen = {};
 
 
-    /* =====================================================
-       HUD
-    ===================================================== */
-
     aktualisiereHUD();
-
-
-    /* =====================================================
-       REWARDS
-    ===================================================== */
 
     renderRewards();
 
-
-    /* =====================================================
-       ALLE KATEGORIEN NEU LADEN
-    ===================================================== */
 
     Object.keys(
         missionen
@@ -3598,10 +4072,6 @@ function spielZuruecksetzen() {
         );
 
 
-    /* =====================================================
-       ERSTE KATEGORIE
-    ===================================================== */
-
     zeigeKategorie(
 
         "integration",
@@ -3614,7 +4084,9 @@ function spielZuruecksetzen() {
 
 
     alert(
+
         "🔄 Der Integrations-Navigator wurde zurückgesetzt."
+
     );
 
 }
@@ -3624,35 +4096,50 @@ function spielZuruecksetzen() {
    START
 ========================================================= */
 
-Object.keys(
-    missionen
-)
-    .forEach(
-        kategorie => {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-            renderKategorie(
-                kategorie
+        /*
+           Missionen laden
+        */
+
+        Object.keys(
+            missionen
+        )
+            .forEach(
+                kategorie => {
+
+                    renderKategorie(
+                        kategorie
+                    );
+
+                }
             );
 
-        }
-    );
+
+        /*
+           HUD
+        */
+
+        aktualisiereHUD();
 
 
-/* =========================================================
-   HUD
-========================================================= */
+        /*
+           Rewards
+        */
 
-aktualisiereHUD();
+        renderRewards();
 
 
-/* =========================================================
-   REWARDS
+        /*
+           Supabase Login prüfen
+        */
 
-   Beim Laden werden KEINE neuen Rewards ausgelöst.
-   Bereits erreichte Rewards werden nur angezeigt.
-========================================================= */
+        authBeimStart();
 
-renderRewards();
+    }
+);
 
 
 /* =========================================================
@@ -3675,7 +4162,9 @@ if (
                     function () {
 
                         console.log(
+
                             "✅ Exploring Integration PWA aktiviert"
+
                         );
 
                     }
@@ -3684,8 +4173,11 @@ if (
                     function (error) {
 
                         console.error(
+
                             "❌ PWA Service Worker Fehler:",
+
                             error
+
                         );
 
                     }
@@ -3695,4 +4187,3 @@ if (
     );
 
 }
-
