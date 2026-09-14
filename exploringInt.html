@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+<head>
+    <script src="./chatbot.js" defer></script>
+<script type="module" src="./index.js"></script>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="./index.css">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- JavaScript -->
+    <script src="./index.js" defer></script>
+
+    <!-- PWA -->
+    <link rel="manifest" href="./manifest.json">
+
+    <meta name="theme-color" content="#2563eb">
+
+    <link rel="apple-touch-icon"
+          href="./icons/icon192.png">
+
+    <meta name="mobile-web-app-capable"
+          content="yes">
+
+    <meta name="apple-mobile-web-app-capable"
+          content="yes">
+
+    <meta name="apple-mobile-web-app-status-bar-style"
+          content="default">
+
+    <meta name="apple-mobile-web-app-title"
+          content="Exploring Integration">
+
+</head>
+<title>Xplore-1ntegrations München</title>
+
+</head>
+
+
+<body>
+
+    <audio
+    id="rewardMusic"
+    preload="auto"
+>
+    <source src="./music/reward.mp3">
+</audio>
+<div
+    class="reward-modal-overlay"
+    id="rewardModalOverlay"
+    onclick="if(event.target === this) schliesseRewardModal()"
+></div>
+      
+<!-- =========================================================
+     LOGIN / REGISTRIERUNG
+========================================================= -->
+<!--
+<section id="authSection" class="auth-section">
+
+    <div class="auth-box">
+
+        <h2>👋 Willkommen!</h2>
+
+        <p>
+            Melde dich an oder erstelle ein neues Konto.
+        </p>
+
+        <div class="form-group">
+
+            <label for="authName">
+                👤 Benutzername
+            </label>
+
+            <input
+                type="text"
+                id="authName"
+                placeholder="Dein Benutzername"
+                autocomplete="username"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="authEmail">
+                📧 E-Mail
+            </label>
+
+            <input
+                type="email"
+                id="authEmail"
+                placeholder="deine@email.de"
+                autocomplete="email"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="authPassword">
+                🔐 Passwort
+            </label>
+
+            <input
+                type="password"
+                id="authPassword"
+                placeholder="Mindestens 6 Zeichen"
+                autocomplete="current-password"
+            >
+
+        </div>
+
+        <button
+            class="game-button"
+            onclick="registrieren()"
+        >
+            📝 Registrieren
+        </button>
+
+        <button
+            class="game-button"
+            onclick="anmelden()"
+        >
+            🔐 Anmelden
+        </button>
+
+        <button
+            class="game-button"
+            onclick="abmelden()"
+            style="display:none;"
+            id="logoutButton"
+        >
+            🚪 Abmelden
+        </button>
+
+        <div
+            id="authStatus"
+            style="margin-top:15px;"
+        ></div>
+
+    </div>
+
+</section>
+-->
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="header">
+
+<div class="header-inner">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+          <img
+    src="./icons/icon192.png"
+    alt="Exploring Integration"
+    width="80"
+    height="50"
+>
+        </div>
+
+        <div>
+
+            <h1>
+                1ntegrations-Navigator
+            </h1>
+
+            <small>
+                Dein Weg zur Selbstständigkeit
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <div class="hud">
+
+        <div class="hud-box">
+
+            <strong id="punkte">
+                0
+            </strong>
+
+            <span>
+                ⭐ Gesamtpunkte
+            </span>
+
+        </div>
+
+
+        <div class="hud-box">
+
+            <strong id="erledigt">
+                0
+            </strong>
+
+            <span>
+                ✅ Aufgaben
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+<!--<button id="backButton" class="back-button" onclick="zeigeStartseite()">
+    ← Zurück
+</button>-->
+
+</header>
+
+
+
+<main class="container">
+
+
+<section class="welcome">
+
+<h2>
+    Willkommen im Integrations-Navigator 👋
+</h2>
+
+<p>
+    Hier erledigst du echte Aufgaben Schritt für Schritt.
+    Jede abgeschlossene Aufgabe bringt Punkte.
+    Wenn eine Aufgabe abgeschlossen ist, wartet bereits
+    die nächste auf dich.
+</p>
+
+</section>
+
+<!----Points-Card ------------------------------------------------------------------------------->
+
+<section class="points-card">
+
+<div class="points-header">
+
+    <div>
+
+        <div class="points-title">
+            ⭐ Dein Fortschritt
+        </div>
+
+        <div class="points-description">
+            Sammle Punkte durch selbstständiges Erledigen
+            deiner Aufgaben.
+        </div>
+
+    </div>
+
+
+    <div class="total-points">
+
+        <span id="punkteGross">
+            0
+        </span>
+
+        ⭐
+
+    </div>
+
+</div>
+
+</section>
+
+<!--category-grid-------------------------------------------------------------------------------->
+
+<section class="category-grid">
+
+
+<div
+    class="category-card active"
+    onclick="zeigeKategorie('integration',this)"
+>
+
+<div class="category-icon">
+    📚
+</div>
+
+<h3>
+    Integrationskurs
+</h3>
+
+<p>
+    Deutsch lernen und einen passenden Kurs finden.
+</p>
+
+<div class="category-arrow">
+    ›
+</div>
+
+</div>
+
+
+
+<div
+    class="category-card"
+    onclick="zeigeKategorie('kita',this)"
+>
+
+<div class="category-icon">
+    🏫
+</div>
+
+<h3>
+    Kita
+</h3>
+
+<p>
+    Eine passende Kita finden.
+</p>
+
+<div class="category-arrow">
+    ›
+</div>
+
+</div>
+
+
+
+<div
+    class="category-card"
+    onclick="zeigeKategorie('sozial',this)"
+>
+
+<div class="category-icon">
+    🏛️
+</div>
+
+<h3>
+    Sozialbürgerhaus
+</h3>
+
+<p>
+    Zuständige Stelle anhand der PLZ finden.
+</p>
+
+<div class="category-arrow">
+    ›
+</div>
+
+</div>
+
+
+
+<div
+    class="category-card"
+    onclick="zeigeKategorie('mobilitaet',this)"
+>
+
+<div class="category-icon">
+    🚌
+</div>
+
+<h3>
+    Mobilität
+</h3>
+
+<p>
+    Selbstständig mit Bus und Bahn unterwegs sein.
+</p>
+
+<div class="category-arrow">
+    ›
+</div>
+
+</div>
+
+
+
+<div
+    class="category-card"
+    onclick="zeigeKategorie('auslaender',this)"
+>
+
+<div class="category-icon">
+    🛂
+</div>
+
+<h3>
+    Ausländerbehörde
+</h3>
+
+<p>
+    Informationen und Anträge selbst finden.
+</p>
+
+<div class="category-arrow">
+    ›
+</div>
+
+</div>
+
+
+
+<div
+    class="category-card"
+    onclick="zeigeKategorie('jobcenter',this)"
+>
+
+<div class="category-icon">
+    💼
+</div>
+
+<h3>
+    Jobcenter
+</h3>
+
+<p>
+    Aufgaben selbstständig erledigen.
+</p>
+
+<div class="category-arrow">
+    ›
+</div>
+
+</div>
+
+
+
+<div
+    class="category-card"
+    onclick="zeigeKategorie('arbeit',this)"
+>
+
+<div class="category-icon">
+    👷
+</div>
+
+<h3>
+    Agentur für Arbeit
+</h3>
+
+<p>
+    Arbeit, Ausbildung und Beratung.
+</p>
+
+<div class="category-arrow">
+    ›
+</div>
+
+</div>
+<div
+    class="category-card"
+    onclick="zeigeKategorie('wohnung',this)"
+>
+
+<div class="category-icon">
+
+</div>
+
+<h3>
+   Wohnungssuche
+</h3>
+
+<p>
+    Sowon Antrag stellen
+</p>
+
+<div class="category-arrow">
+    ›
+</div>
+
+</div>
+
+</section>
+
+<!----category-content active---------------------------------------------------------------------->
+
+<section
+    id="integration"
+    class="category-content active"
+>
+
+<div class="category-header">
+
+<div class="category-header-icon">
+    📚
+</div>
+
+<div>
+
+<h2>
+    Integrationskurs
+</h2>
+
+<p>
+    Nach jeder abgeschlossenen Aufgabe
+    beginnt automatisch die nächste.
+</p>
+
+</div>
+
+</div>
+
+
+<div id="missionContainer-integration"></div>
+
+</section>
+
+
+
+<section
+    id="kita"
+    class="category-content"
+>
+
+<div class="category-header">
+
+<div class="category-header-icon">
+    🏫
+</div>
+
+<div>
+
+<h2>
+    Kita
+</h2>
+
+<p>
+    Schritt für Schritt selbstständig werden.
+</p>
+
+</div>
+
+</div>
+
+
+<div id="missionContainer-kita"></div>
+
+</section>
+
+
+
+<section
+    id="sozial"
+    class="category-content"
+>
+
+<div class="category-header">
+
+<div class="category-header-icon">
+    🏛️
+</div>
+
+<div>
+
+<h2>
+    Sozialbürgerhaus
+</h2>
+
+<p>
+    Finde dein zuständiges Sozialbürgerhaus
+    direkt anhand deiner PLZ.
+</p>
+
+</div>
+
+</div>
+
+
+<div id="missionContainer-sozial"></div>
+
+</section>
+
+
+
+<section
+    id="mobilitaet"
+    class="category-content"
+>
+
+<div class="category-header">
+
+<div class="category-header-icon">
+    🚌
+</div>
+
+<div>
+
+<h2>
+    Mobilität
+</h2>
+
+<p>
+    Lerne, deine Fahrten selbstständig zu planen.
+</p>
+
+</div>
+
+</div>
+
+
+<div id="missionContainer-mobilitaet"></div>
+
+</section>
+
+
+
+<section
+    id="auslaender"
+    class="category-content"
+>
+
+<div class="category-header">
+
+<div class="category-header-icon">
+    🛂
+</div>
+
+<div>
+
+<h2>
+    Ausländerbehörde
+</h2>
+
+<p>
+    Jede erledigte Aufgabe bringt dich einen Schritt weiter.
+</p>
+
+</div>
+
+</div>
+
+
+<div id="missionContainer-auslaender"></div>
+
+</section>
+
+
+
+<section
+    id="jobcenter"
+    class="category-content"
+>
+
+<div class="category-header">
+
+<div class="category-header-icon">
+    💼
+</div>
+
+<div>
+
+<h2>
+    Jobcenter
+</h2>
+
+<p>
+    Selbstständig digitale Aufgaben erledigen.
+</p>
+
+</div>
+
+</div>
+
+
+<div id="missionContainer-jobcenter"></div>
+
+</section>
+
+
+
+<section
+    id="arbeit"
+    class="category-content"
+>
+
+<div class="category-header">
+
+<div class="category-header-icon">
+    👷
+</div>
+
+<div>
+
+<h2>
+    Agentur für Arbeit
+</h2>
+
+<p>
+    Arbeit, Ausbildung und Weiterbildung entdecken.
+</p>
+
+</div>
+
+</div>
+
+
+<div id="missionContainer-arbeit"></div>
+
+</section>
+
+<section
+    id="wohnung"
+    class="category-content"
+>
+
+<div class="category-header">
+
+<div class="category-header-icon">
+    🏫
+</div>
+
+<div>
+
+<h2>
+    Wohnungssuche
+</h2>
+
+<p>
+    Schritt für Schritt selbstständig werden.
+</p>
+
+</div>
+
+</div>
+
+
+<div id="missionContainer-wohnung"></div>
+
+</section>
+
+
+<!--------rewards-section--------------------------------------------------------------------->
+
+<section class="rewards-section">
+
+<div class="rewards-header">
+
+<h2>
+    🏆 Deine Rewards
+</h2>
+
+<p>
+    Sammle Punkte und schalte echte Belohnungen frei.
+</p>
+
+</div>
+
+
+<div class="rewards-grid" id="rewardsContainer"></div>
+
+</section>
+
+
+<!---------"reset-section"------------------------------------------------>
+<section class="reset-section">
+
+<h2>
+    🔄 Spiel zurücksetzen
+</h2>
+
+<p>
+    Damit werden deine gesammelten Punkte,
+    erledigten Aufgaben und freigeschalteten Rewards
+    gelöscht. Danach beginnt der Navigator wieder
+    bei 0 Punkten.
+</p>
+
+<button
+    class="reset-button"
+    onclick="spielZuruecksetzen()"
+>
+    🗑️ Fortschritt vollständig zurücksetzen
+</button>
+
+</section>
+
+
+</main>
+
+
+<!-- =========================================================
+     GROSSES REWARD-POPUP (wird per JS befüllt)
+========================================================= -->
+
+<div
+    class="reward-modal-overlay"
+    id="rewardModalOverlay"
+    onclick="if(event.target === this) schliesseRewardModal()"
+></div>
+
+<!-- =====================================================
+     INTEGRATIONS-HELFER
+===================================================== -->
+<!-- =====================================================
+     INTEGRATIONS-HELFER
+===================================================== -->
+
+<div id="integrationChatbot" class="integration-chatbot">
+
+    <div class="chatbot-box">
+
+        <button
+            class="chatbot-close"
+            onclick="chatbotSchliessen()"
+            aria-label="Chat schließen"
+        >
+            ×
+        </button>
+
+        <div class="chatbot-icon">
+            🤖
+        </div>
+
+        <h3>Kann ich dir helfen?</h3>
+
+        <p>
+            Hast du gefunden, was du brauchst?
+            Wenn du möchtest, kann dir ein Berater
+            weiterhelfen.
+        </p>
+
+        <div class="chatbot-buttons">
+
+            <button
+                class="chatbot-ja"
+                onclick="chatbotHilfeOeffnen()"
+            >
+                Ja, ich brauche Hilfe
+            </button>
+
+            <button
+                class="chatbot-nein"
+                onclick="chatbotSchliessen()"
+            >
+                Nein, ich habe alles gefunden
+            </button>
+
+        </div>
+
+        <div id="chatbotFragen"></div>
+
+    </div>
+
+</div>
+
+<div class="chatbot-icon">
+    👩🏻‍💼💬
+</div>
+
+<button
+    onclick="chatbotHilfeOeffnen()"
+>
+    Ja, ich brauche Hilfe
+</button>
+<button
+    onclick="beraterChatOeffnen()"
+>
+    👩🏻‍💼 Mit einem Berater chatten
+</button>
+</body>
+
+</html>
