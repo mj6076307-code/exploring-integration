@@ -2,105 +2,21 @@
    EXPLORING INTEGRATION
    Integrations-Navigator München
 
-   KOMPLETTER INDEX.JS
-
-   Enthält:
-   - Supabase Registrierung
-   - Supabase Login
-   - Supabase Logout
-   - Benutzername
-   - Session beim Start
-   - Kategorien
-   - Missionen
-   - Aufgaben
-   - Punkte
-   - erledigte Aufgaben
-   - Rewards
-   - Reward-Popup
-   - Fortschritt pro Benutzer
-   - Zurücksetzen
+   SYSTEM:
+   - Missionen können immer wieder gespielt werden
+   - Nach der letzten Mission beginnt die erste wieder
+   - Punkte werden immer weiter gesammelt
+   - Rewards werden nur EINMAL freigeschaltet
+   - Mission erscheint nach Abschluss wieder frisch
 ========================================================= */
-
-
-/* =========================================================
-   SUPABASE
-========================================================= */
-
-const SUPABASE_URL =
-    "https://ficgwgdoulrfigqgyrub.supabase.co";
-
-const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_K2TIOz1zzpXyOatnA14JBw_9gxvXXvc";
-
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-    );
-
-
-/* =========================================================
-   AKTUELLER BENUTZER
-========================================================= */
-
-let aktuellerBenutzer = null;
-
-
-/* =========================================================
-   GAMIFICATION
-========================================================= */
-
-let punkte = 0;
-
-let erledigteMissionen = 0;
-
-let missionsPositionen = {};
-
-
-/* =========================================================
-   REWARDS
-========================================================= */
-
-const rewards = [
-
-    {
-        id: "reward1",
-        icon: "📚",
-        name: "Lernmaterial",
-        description:
-            "Ein Lernmaterial oder Buch für deinen weiteren Weg.",
-        points: 25
-    },
-
-    {
-        id: "reward2",
-        icon: "🎁",
-        name: "Kleine Belohnung",
-        description:
-            "Eine kleine Anerkennung für deinen Fortschritt.",
-        points: 50
-    },
-
-    {
-        id: "reward3",
-        icon: "🤝",
-        name: "Patenschaft",
-        description:
-            "Unterstützung durch eine Patin oder einen Paten.",
-        points: 100
-    },
-
-    {
-        id: "reward4",
-        icon: "🏆",
-        name: "Integrations-Champion",
-        description:
-            "Du hast einen wichtigen Meilenstein erreicht.",
-        points: 200
-    }
-
-];
-
+//import * as integrationskurs from "./modules/integrationskurs/index.js";
+//import * as kita from "./modules/kita/index.js";
+//import * as sozialbuergerhaus from "./modules/sozialbuergerhaus/index.js";
+//import * as mobilitaet from "./modules/mobilitaet/index.js";
+//import * as auslaenderbehoerde from "./modules/auslaenderbehoerde/index.js";
+//import * as jobcenter from "./modules/jobcenter/index.js";
+//import * as wohnung from "./modules/wohnung/index.js";
+//import * as arbeit from "./modules/arbeit/index.js";
 
 /* =========================================================
    MISSIONEN
@@ -111,48 +27,33 @@ const missionen = {
     integration: [
 
         {
-            id: "integration_1",
-            icon: "🔎",
-            title: "Integrationskurs finden",
-            description:
-                "Finde einen passenden Integrationskurs in deiner Nähe.",
-            tasks: [
+            id: "integration-1",
+            titel: "Finde einen Integrationskurs",
+            beschreibung:
+                "Finde selbstständig einen passenden Integrationskurs.",
+            punkte: 30,
+            icon: "📚",
+            typ: "integrationskurs"
+        },
 
-                {
-                    id: "integration_1_1",
-                    title: "BAMF-NAvI öffnen",
-                    text:
-                        "Öffne das BAMF-NAvI und suche nach Integrationskursen.",
-                    points: 5,
-                    link:
-                        "https://bamf-navi.bamf.de/"
-                },
+        {
+            id: "integration-2",
+            titel: "Informiere dich über die Anmeldung",
+            beschreibung:
+                "Finde heraus, welche Unterlagen du für die Anmeldung brauchst.",
+            punkte: 20,
+            icon: "📄",
+            typ: "text"
+        },
 
-                {
-                    id: "integration_1_2",
-                    title: "Postleitzahl eingeben",
-                    text:
-                        "Gib deine Postleitzahl ein und suche nach Kursen.",
-                    points: 5
-                },
-
-                {
-                    id: "integration_1_3",
-                    title: "Kurs auswählen",
-                    text:
-                        "Wähle mindestens einen passenden Kurs aus.",
-                    points: 5
-                },
-
-                {
-                    id: "integration_1_4",
-                    title: "Kursanbieter merken",
-                    text:
-                        "Notiere dir den Namen des Kursanbieters.",
-                    points: 5
-                }
-
-            ]
+        {
+            id: "integration-3",
+            titel: "Finde heraus, wann dein Kurs beginnt",
+            beschreibung:
+                "Suche bei deinem Anbieter den möglichen Kursbeginn.",
+            punkte: 20,
+            icon: "📅",
+            typ: "text"
         }
 
     ],
@@ -161,48 +62,33 @@ const missionen = {
     kita: [
 
         {
-            id: "kita_1",
+            id: "kita-1",
+            titel: "Finde eine passende Kita",
+            beschreibung:
+                "Suche selbstständig eine Kita in deiner Nähe.",
+            punkte: 30,
             icon: "🏫",
-            title: "Kita finden",
-            description:
-                "Finde eine passende Kindertageseinrichtung.",
-            tasks: [
+            typ: "kita"
+        },
 
-                {
-                    id: "kita_1_1",
-                    title: "Kita-Finder öffnen",
-                    text:
-                        "Öffne den Münchner Kita-Finder.",
-                    points: 5,
-                    link:
-                        "https://kitafinder.muenchen.de/elternportal/de/"
-                },
+        {
+            id: "kita-2",
+            titel: "Informiere dich über die Anmeldung",
+            beschreibung:
+                "Finde heraus, wie die Anmeldung funktioniert.",
+            punkte: 20,
+            icon: "📋",
+            typ: "text"
+        },
 
-                {
-                    id: "kita_1_2",
-                    title: "Wohnort eingeben",
-                    text:
-                        "Suche nach Kitas in deiner Nähe.",
-                    points: 5
-                },
-
-                {
-                    id: "kita_1_3",
-                    title: "Kita auswählen",
-                    text:
-                        "Wähle eine passende Kita aus.",
-                    points: 5
-                },
-
-                {
-                    id: "kita_1_4",
-                    title: "Kontakt speichern",
-                    text:
-                        "Speichere die Kontaktdaten der Kita.",
-                    points: 5
-                }
-
-            ]
+        {
+            id: "kita-3",
+            titel: "Finde die Kontaktmöglichkeit",
+            beschreibung:
+                "Finde Telefonnummer oder E-Mail der Kita.",
+            punkte: 20,
+            icon: "☎️",
+            typ: "text"
         }
 
     ],
@@ -211,46 +97,33 @@ const missionen = {
     sozial: [
 
         {
-            id: "sozial_1",
+            id: "sozial-1",
+            titel: "Finde dein Sozialbürgerhaus",
+            beschreibung:
+                "Gib deine PLZ ein und finde sofort deine zuständige Stelle.",
+            punkte: 20,
             icon: "🏛️",
-            title: "Zuständiges Sozialbürgerhaus finden",
-            description:
-                "Finde anhand deiner Postleitzahl dein zuständiges Sozialbürgerhaus.",
-            tasks: [
+            typ: "sozial"
+        },
 
-                {
-                    id: "sozial_1_1",
-                    title: "Postleitzahl bereithalten",
-                    text:
-                        "Halte deine aktuelle Postleitzahl bereit.",
-                    points: 5
-                },
+        {
+            id: "sozial-2",
+            titel: "Informiere dich über die Angebote",
+            beschreibung:
+                "Finde heraus, welche Unterstützung das Sozialbürgerhaus anbietet.",
+            punkte: 20,
+            icon: "ℹ️",
+            typ: "text"
+        },
 
-                {
-                    id: "sozial_1_2",
-                    title: "Zuständigkeit suchen",
-                    text:
-                        "Suche anhand deiner Postleitzahl nach dem zuständigen Sozialbürgerhaus.",
-                    points: 5
-                },
-
-                {
-                    id: "sozial_1_3",
-                    title: "Adresse finden",
-                    text:
-                        "Notiere dir die Adresse.",
-                    points: 5
-                },
-
-                {
-                    id: "sozial_1_4",
-                    title: "Kontakt speichern",
-                    text:
-                        "Speichere die Telefonnummer oder Website.",
-                    points: 5
-                }
-
-            ]
+        {
+            id: "sozial-3",
+            titel: "Finde die Kontaktmöglichkeiten",
+            beschreibung:
+                "Finde heraus, wie du dein Sozialbürgerhaus erreichen kannst.",
+            punkte: 20,
+            icon: "☎️",
+            typ: "text"
         }
 
     ],
@@ -259,46 +132,33 @@ const missionen = {
     mobilitaet: [
 
         {
-            id: "mobilitaet_1",
+            id: "mobilitaet-1",
+            titel: "Plane eine Fahrt",
+            beschreibung:
+                "Plane selbstständig eine Fahrt mit Bus und Bahn.",
+            punkte: 20,
             icon: "🚌",
-            title: "Fahrt selbstständig planen",
-            description:
-                "Lerne, eine Fahrt mit Bus und Bahn selbst zu planen.",
-            tasks: [
+            typ: "mobilitaet"
+        },
 
-                {
-                    id: "mobilitaet_1_1",
-                    title: "Startpunkt eingeben",
-                    text:
-                        "Gib deinen Startpunkt in einer Fahrplan-App ein.",
-                    points: 5
-                },
+        {
+            id: "mobilitaet-2",
+            titel: "Finde eine alternative Verbindung",
+            beschreibung:
+                "Finde eine zweite Möglichkeit, dein Ziel zu erreichen.",
+            punkte: 20,
+            icon: "🔄",
+            typ: "text"
+        },
 
-                {
-                    id: "mobilitaet_1_2",
-                    title: "Ziel eingeben",
-                    text:
-                        "Gib dein Ziel ein.",
-                    points: 5
-                },
-
-                {
-                    id: "mobilitaet_1_3",
-                    title: "Verbindung auswählen",
-                    text:
-                        "Wähle eine passende Verbindung.",
-                    points: 5
-                },
-
-                {
-                    id: "mobilitaet_1_4",
-                    title: "Abfahrtszeit prüfen",
-                    text:
-                        "Prüfe Abfahrtszeit und Umstieg.",
-                    points: 5
-                }
-
-            ]
+        {
+            id: "mobilitaet-3",
+            titel: "Finde die günstigste Verbindung",
+            beschreibung:
+                "Vergleiche verschiedene Möglichkeiten.",
+            punkte: 20,
+            icon: "💶",
+            typ: "text"
         }
 
     ],
@@ -307,46 +167,43 @@ const missionen = {
     auslaender: [
 
         {
-            id: "auslaender_1",
+            id: "auslaender-1",
+            titel: "Finde eine Information",
+            beschreibung:
+                "Suche selbstständig eine Information zu deinem Aufenthalt.",
+            punkte: 20,
             icon: "🛂",
-            title: "Informationen selbst finden",
-            description:
-                "Lerne, Informationen der Ausländerbehörde selbstständig zu finden.",
-            tasks: [
+            typ: "auslaender"
+        },
 
-                {
-                    id: "auslaender_1_1",
-                    title: "Website öffnen",
-                    text:
-                        "Suche die offizielle Website der Münchner Ausländerbehörde.",
-                    points: 5
-                },
+        {
+            id: "auslaender-2",
+            titel: "Finde den passenden Antrag",
+            beschreibung:
+                "Finde heraus, welchen Antrag du für dein Anliegen brauchst.",
+            punkte: 20,
+            icon: "📄",
+            typ: "text"
+        },
 
-                {
-                    id: "auslaender_1_2",
-                    title: "Passendes Thema suchen",
-                    text:
-                        "Finde den Bereich, der zu deinem Anliegen passt.",
-                    points: 5
-                },
+        {
+            id: "auslaender-3",
+            titel: "Finde heraus, wie du einen Termin bekommst",
+            beschreibung:
+                "Informiere dich über die Terminvereinbarung.",
+            punkte: 20,
+            icon: "📅",
+            typ: "text"
+        },
 
-                {
-                    id: "auslaender_1_3",
-                    title: "Benötigte Unterlagen prüfen",
-                    text:
-                        "Prüfe, welche Unterlagen benötigt werden.",
-                    points: 5
-                },
-
-                {
-                    id: "auslaender_1_4",
-                    title: "Termin oder Antrag finden",
-                    text:
-                        "Finde heraus, wie du den nächsten Schritt erledigen kannst.",
-                    points: 5
-                }
-
-            ]
+        {
+            id: "auslaender-4",
+            titel: "Bereite deinen nächsten Behördengang vor",
+            beschreibung:
+                "Finde heraus, welche Unterlagen du benötigst.",
+            punkte: 20,
+            icon: "📁",
+            typ: "text"
         }
 
     ],
@@ -355,98 +212,33 @@ const missionen = {
     jobcenter: [
 
         {
-            id: "jobcenter_1",
+            id: "jobcenter-1",
+            titel: "Finde eine Aufgabe beim Jobcenter",
+            beschreibung:
+                "Erledige eine konkrete Aufgabe selbstständig.",
+            punkte: 20,
             icon: "💼",
-            title: "Jobcenter-Aufgabe selbstständig erledigen",
-            description:
-                "Finde Informationen und erledige einen ersten Schritt selbstständig.",
-            tasks: [
-
-                {
-                    id: "jobcenter_1_1",
-                    title: "Jobcenter München öffnen",
-                    text:
-                        "Öffne die Website des Jobcenters München.",
-                    points: 5,
-                    link:
-                        "https://www.arbeitsagentur.de/vor-ort/jobcenter/jobcenter-muenchen-muenchen-84381.html"
-                },
-
-                {
-                    id: "jobcenter_1_2",
-                    title: "Passendes Anliegen finden",
-                    text:
-                        "Suche den Bereich, der zu deinem Anliegen passt.",
-                    points: 5
-                },
-
-                {
-                    id: "jobcenter_1_3",
-                    title: "Unterlagen prüfen",
-                    text:
-                        "Prüfe, welche Unterlagen benötigt werden.",
-                    points: 5
-                },
-
-                {
-                    id: "jobcenter_1_4",
-                    title: "Nächsten Schritt bestimmen",
-                    text:
-                        "Finde heraus, was du als Nächstes erledigen musst.",
-                    points: 5
-                }
-
-            ]
-        }
-
-    ],
-
-
-    arbeit: [
+            typ: "jobcenter"
+        },
 
         {
-            id: "arbeit_1",
-            icon: "👷",
-            title: "Arbeit und Ausbildung entdecken",
-            description:
-                "Finde selbstständig Informationen zu Arbeit und Ausbildung.",
-            tasks: [
+            id: "jobcenter-2",
+            titel: "Finde einen passenden Antrag",
+            beschreibung:
+                "Suche einen Antrag, der zu deinem Anliegen passt.",
+            punkte: 20,
+            icon: "📄",
+            typ: "text"
+        },
 
-                {
-                    id: "arbeit_1_1",
-                    title: "Agentur für Arbeit öffnen",
-                    text:
-                        "Öffne die Website der Agentur für Arbeit.",
-                    points: 5,
-                    link:
-                        "https://www.arbeitsagentur.de/"
-                },
-
-                {
-                    id: "arbeit_1_2",
-                    title: "Berufe suchen",
-                    text:
-                        "Suche nach einem Beruf, der dich interessiert.",
-                    points: 5
-                },
-
-                {
-                    id: "arbeit_1_3",
-                    title: "Ausbildung suchen",
-                    text:
-                        "Finde eine passende Ausbildung oder Weiterbildung.",
-                    points: 5
-                },
-
-                {
-                    id: "arbeit_1_4",
-                    title: "Information speichern",
-                    text:
-                        "Speichere eine interessante Möglichkeit.",
-                    points: 5
-                }
-
-            ]
+        {
+            id: "jobcenter-3",
+            titel: "Finde eine Kontaktmöglichkeit",
+            beschreibung:
+                "Finde heraus, wie du das Jobcenter erreichen kannst.",
+            punkte: 20,
+            icon: "☎️",
+            typ: "text"
         }
 
     ],
@@ -455,46 +247,68 @@ const missionen = {
     wohnung: [
 
         {
-            id: "wohnung_1",
+            id: "wohnung-1",
+            titel: "Finde eine geförderte Wohnung",
+            beschreibung:
+                "Informiere dich über SOWON und suche selbstständig nach einer passenden Wohnung.",
+            punkte: 30,
             icon: "🏠",
-            title: "Wohnungssuche",
-            description:
-                "Lerne, einen SOWON-Antrag selbstständig vorzubereiten.",
-            tasks: [
+            typ: "wohnung"
+        },
 
-                {
-                    id: "wohnung_1_1",
-                    title: "SOWON-Informationen finden",
-                    text:
-                        "Informiere dich über den SOWON-Antrag.",
-                    points: 5
-                },
+        {
+            id: "wohnung-2",
+            titel: "Informiere dich über den Wohnungsantrag",
+            beschreibung:
+                "Finde heraus, welche Voraussetzungen und Unterlagen du für den Antrag benötigst.",
+            punkte: 20,
+            icon: "📄",
+            typ: "text"
+        },
 
-                {
-                    id: "wohnung_1_2",
-                    title: "Voraussetzungen prüfen",
-                    text:
-                        "Prüfe, ob du die Voraussetzungen erfüllst.",
-                    points: 5
-                },
+        {
+            id: "wohnung-3",
+            titel: "Finde heraus, wie die Wohnungssuche funktioniert",
+            beschreibung:
+                "Informiere dich, wie du dich auf Wohnungen bewerben kannst.",
+            punkte: 20,
+            icon: "🔎",
+            typ: "text"
+        }
 
-                {
-                    id: "wohnung_1_3",
-                    title: "Unterlagen vorbereiten",
-                    text:
-                        "Bereite die benötigten Unterlagen vor.",
-                    points: 5
-                },
+    ],
 
-                {
-                    id: "wohnung_1_4",
-                    title: "Antrag vorbereiten",
-                    text:
-                        "Bereite den nächsten Schritt für deinen Antrag vor.",
-                    points: 5
-                }
 
-            ]
+    arbeit: [
+
+        {
+            id: "arbeit-1",
+            titel: "Finde ein berufliches Angebot",
+            beschreibung:
+                "Suche ein Stellenangebot, eine Ausbildung oder Weiterbildung.",
+            punkte: 20,
+            icon: "👷",
+            typ: "arbeit"
+        },
+
+        {
+            id: "arbeit-2",
+            titel: "Finde eine passende Ausbildung",
+            beschreibung:
+                "Suche eine Ausbildung, die zu dir passen könnte.",
+            punkte: 30,
+            icon: "🎓",
+            typ: "text"
+        },
+
+        {
+            id: "arbeit-3",
+            titel: "Finde eine Weiterbildung",
+            beschreibung:
+                "Suche eine Weiterbildung, die dich beruflich weiterbringt.",
+            punkte: 20,
+            icon: "📚",
+            typ: "text"
         }
 
     ]
@@ -503,573 +317,366 @@ const missionen = {
 
 
 /* =========================================================
-   HILFSFUNKTIONEN
+   SOZIALBÜRGERHÄUSER
 ========================================================= */
 
-function holeBenutzerId() {
+const sozialbuergerhaeuser = [
 
-    if (!aktuellerBenutzer) {
+    {
+        plz: [
+            "80331",
+            "80333",
+            "80335",
+            "80336",
+            "80337",
+            "80339"
+        ],
+        name: "Sozialbürgerhaus Mitte",
+        adresse: "Schwanthalerstraße 62, 80336 München",
+        telefon: "089 233-96801"
+    },
+
+    {
+        plz: [
+            "80634",
+            "80636",
+            "80637",
+            "80638",
+            "80639",
+            "80993",
+            "80997"
+        ],
+        name: "Sozialbürgerhaus Neuhausen-Moosach",
+        adresse: "Ehrenbreitsteiner Straße 28, 80993 München",
+        telefon: "089 233-96801"
+    },
+
+    {
+        plz: [
+            "80801",
+            "80802",
+            "80803",
+            "80804",
+            "80805",
+            "80807",
+            "80809",
+            "80939"
+        ],
+        name: "Sozialbürgerhaus Schwabing-Freimann",
+        adresse: "Heidemannstraße 170, 80939 München",
+        telefon: "089 233-96801"
+    },
+
+    {
+        plz: [
+            "81667",
+            "81669",
+            "81671",
+            "81675",
+            "81677",
+            "81679"
+        ],
+        name: "Sozialbürgerhaus Orleansplatz",
+        adresse: "Orleansplatz 11, 81667 München",
+        telefon: "089 233-96801"
+    },
+
+    {
+        plz: [
+            "80339",
+            "80686",
+            "80687",
+            "80689"
+        ],
+        name: "Sozialbürgerhaus Laim-Schwanthalerhöhe",
+        adresse: "Laim / Schwanthalerhöhe, München",
+        telefon: "089 233-96801"
+    },
+
+    {
+        plz: [
+            "80807",
+            "80809",
+            "80933",
+            "80935",
+            "80995"
+        ],
+        name: "Sozialbürgerhaus Nord",
+        adresse: "Milbertshofen / Feldmoching, München",
+        telefon: "089 233-96801"
+    },
+
+    {
+        plz: [
+            "81673",
+            "81675",
+            "81825",
+            "81827",
+            "81829"
+        ],
+        name: "Sozialbürgerhaus Berg am Laim-Trudering-Riem",
+        adresse: "Berg am Laim / Trudering-Riem, München",
+        telefon: "089 233-96801"
+    },
+
+    {
+        plz: [
+            "81735",
+            "81737",
+            "81739"
+        ],
+        name: "Sozialbürgerhaus Ramersdorf-Perlach",
+        adresse: "Thomas-Dehler-Straße 16, 81737 München",
+        telefon: "089 233-96801"
+    },
+
+    {
+        plz: [
+            "81539",
+            "81541",
+            "81543",
+            "81545",
+            "81547",
+            "81549"
+        ],
+        name: "Sozialbürgerhaus Giesing-Harlaching",
+        adresse: "Werner-Schlierf-Straße 9, 81539 München",
+        telefon: "089 233-96801"
+    },
+
+    {
+        plz: [
+            "81369",
+            "81371",
+            "81373",
+            "81375",
+            "81377",
+            "81379"
+        ],
+        name: "Sozialbürgerhaus Sendling-Westpark",
+        adresse: "Meindlstraße 14, 81373 München",
+        telefon: "089 233-96801"
+    },
+
+    {
+        plz: [
+            "81379",
+            "81475",
+            "81476",
+            "81477",
+            "81479",
+            "81377"
+        ],
+        name: "Sozialbürgerhaus Süd",
+        adresse: "Schertlinstraße 2, 81379 München",
+        telefon: "089 233-96801"
+    },
+
+    {
+        plz: [
+            "81241",
+            "81243",
+            "81245",
+            "81247",
+            "81249",
+            "80999"
+        ],
+        name: "Sozialbürgerhaus West / Pasing",
+        adresse: "Landsberger Straße 486, 81241 München",
+        telefon: "089 233-96801"
+    }
+
+];
+
+
+/* =========================================================
+   REWARDS
+
+   WICHTIG:
+   Jeder Reward wird nur EINMAL freigeschaltet.
+========================================================= */
+
+const rewards = [
+
+    {
+        id: "reward-50",
+        punkte: 50,
+        icon: "📚",
+        name: "Lernmaterial",
+        beschreibung:
+            "Du hast 50 Punkte gesammelt! Du erhältst Buchmaterial zum Deutschlernen."
+    },
+
+    {
+        id: "reward-100",
+        punkte: 100,
+        icon: "🎟️",
+        name: "Veranstaltung",
+        beschreibung:
+            "Du hast 100 Punkte gesammelt! Du erhältst einen kleinen Reward für eine Veranstaltung."
+    },
+
+    {
+        id: "reward-150",
+        punkte: 150,
+        icon: "☕",
+        name: "Gemeinsame Aktivität",
+        beschreibung:
+            "Du hast 150 Punkte gesammelt! Eine kleine gemeinsame Aktivität wartet auf dich."
+    },
+
+    {
+        id: "reward-200",
+        punkte: 200,
+        icon: "🏛️",
+        name: "Museum / Veranstaltung",
+        beschreibung:
+            "Du hast 200 Punkte gesammelt! Du erhältst einen Reward für eine Veranstaltung oder einen Museumsbesuch."
+    },
+
+    {
+        id: "reward-300",
+        punkte: 300,
+        icon: "🤝",
+        name: "Patenschaft",
+        beschreibung:
+            "Du hast 300 Punkte gesammelt! Eine Patenschaft wurde als Reward freigeschaltet."
+    }
+
+];
+
+
+/* =========================================================
+   SPIELSTAND
+========================================================= */
+
+let punkte = parseInt(
+    localStorage.getItem("integrations_punkte") || "0"
+);
+
+
+/*
+   Anzahl aller abgeschlossenen Missionen.
+
+   WICHTIG:
+   Hier werden Missionen NICHT dauerhaft gespeichert,
+   weil sie wiederholt werden dürfen.
+*/
+let erledigteMissionen = parseInt(
+    localStorage.getItem("integrations_erledigte_anzahl") || "0"
+);
+
+
+/*
+   Welche Mission kommt als Nächstes?
+
+   Beispiel:
+
+   integration = 0
+   → Mission 1
+
+   nach Abschluss:
+   integration = 1
+   → Mission 2
+
+   nach Mission 3:
+   integration = 0
+   → wieder Mission 1
+*/
+let missionsPositionen =
+    JSON.parse(
+        localStorage.getItem(
+            "integrations_missions_positionen"
+        ) || "{}"
+    );
+
+
+/* =========================================================
+   POSITION EINER KATEGORIE LADEN
+========================================================= */
+
+function holeMissionsPosition(kategorie) {
+
+    if (
+        typeof missionsPositionen[kategorie] !== "number"
+    ) {
+
+        missionsPositionen[kategorie] = 0;
+
+    }
+
+    return missionsPositionen[kategorie];
+
+}
+
+
+/* =========================================================
+   POSITION SPEICHERN
+========================================================= */
+
+function speichereMissionsPositionen() {
+
+    localStorage.setItem(
+        "integrations_missions_positionen",
+        JSON.stringify(
+            missionsPositionen
+        )
+    );
+
+}
+
+
+/* =========================================================
+   NÄCHSTE MISSION
+
+   Anders als vorher:
+   Missionen werden NICHT mehr nach "erledigt"
+   gefiltert.
+
+   Stattdessen läuft die Position immer weiter:
+   1 → 2 → 3 → 1 → 2 → 3 ...
+========================================================= */
+
+function naechsteMission(kategorie) {
+
+    const liste =
+        missionen[kategorie];
+
+    if (
+        !liste ||
+        liste.length === 0
+    ) {
+
         return null;
-    }
-
-    return aktuellerBenutzer.id;
-
-}
-
-
-function userStorageKey(name) {
-
-    const userId =
-        holeBenutzerId();
-
-    if (!userId) {
-        return null;
-    }
-
-    return `${name}_${userId}`;
-
-}
-
-
-/* =========================================================
-   AUTH STATUS
-========================================================= */
-
-function zeigeAuthStatus(
-    nachricht,
-    fehler = false
-) {
-
-    const status =
-        document.getElementById("authStatus");
-
-    if (!status) {
-        return;
-    }
-
-    status.textContent =
-        nachricht;
-
-    status.style.color =
-        fehler
-            ? "#dc2626"
-            : "#16a34a";
-
-}
-
-
-/* =========================================================
-   REGISTRIERUNG
-========================================================= */
-
-async function registrieren() {
-
-    const name =
-        document.getElementById("authName")?.value.trim();
-
-    const email =
-        document.getElementById("authEmail")?.value.trim();
-
-    const password =
-        document.getElementById("authPassword")?.value;
-
-
-    if (!name || !email || !password) {
-
-        zeigeAuthStatus(
-            "⚠️ Bitte fülle alle Felder aus.",
-            true
-        );
-
-        return;
-    }
-
-
-    if (password.length < 6) {
-
-        zeigeAuthStatus(
-            "⚠️ Das Passwort muss mindestens 6 Zeichen haben.",
-            true
-        );
-
-        return;
-    }
-
-
-    zeigeAuthStatus(
-        "⏳ Konto wird erstellt..."
-    );
-
-
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient.auth.signUp({
-
-                email: email,
-
-                password: password,
-
-                options: {
-
-                    data: {
-                        username: name
-                    },
-
-                    emailRedirectTo:
-                        window.location.href
-
-                }
-
-            });
-
-
-        if (error) {
-
-            console.error(
-                "Registrierungsfehler:",
-                error
-            );
-
-            zeigeAuthStatus(
-                "❌ " + error.message,
-                true
-            );
-
-            return;
-        }
-
-
-        if (!data.session) {
-
-            zeigeAuthStatus(
-                "✅ Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.",
-                false
-            );
-
-            return;
-        }
-
-
-        benutzerIstAngemeldet(
-            data.user
-        );
 
     }
 
-    catch (fehler) {
-
-        console.error(
-            fehler
-        );
-
-        zeigeAuthStatus(
-            "❌ Bei der Registrierung ist ein Fehler aufgetreten.",
-            true
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   LOGIN
-========================================================= */
-
-async function anmelden() {
-
-    const email =
-        document.getElementById("authEmail")?.value.trim();
-
-    const password =
-        document.getElementById("authPassword")?.value;
-
-
-    if (!email || !password) {
-
-        zeigeAuthStatus(
-            "⚠️ Bitte E-Mail und Passwort eingeben.",
-            true
-        );
-
-        return;
-    }
-
-
-    zeigeAuthStatus(
-        "⏳ Anmeldung läuft..."
-    );
-
-
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient.auth.signInWithPassword({
-
-                email,
-                password
-
-            });
-
-
-        if (error) {
-
-            console.error(
-                "Login-Fehler:",
-                error
-            );
-
-            zeigeAuthStatus(
-                "❌ " + error.message,
-                true
-            );
-
-            return;
-        }
-
-
-        if (!data.session) {
-
-            zeigeAuthStatus(
-                "⚠️ Keine aktive Sitzung gefunden.",
-                true
-            );
-
-            return;
-        }
-
-
-        zeigeAuthStatus(
-            "✅ Erfolgreich angemeldet!"
+    let position =
+        holeMissionsPosition(
+            kategorie
         );
 
 
-        benutzerIstAngemeldet(
-            data.user
-        );
+    /*
+       Falls die Position außerhalb
+       der Liste liegt, wieder bei 0 anfangen.
+    */
+
+    if (
+        position >= liste.length
+    ) {
+
+        position = 0;
+
+        missionsPositionen[kategorie] =
+            0;
+
+        speichereMissionsPositionen();
 
     }
 
-    catch (fehler) {
 
-        console.error(
-            fehler
-        );
-
-        zeigeAuthStatus(
-            "❌ Beim Anmelden ist ein Fehler aufgetreten.",
-            true
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-async function abmelden() {
-
-    const {
-        error
-    } =
-        await supabaseClient.auth.signOut();
-
-
-    if (error) {
-
-        console.error(
-            "Logout-Fehler:",
-            error
-        );
-
-        zeigeAuthStatus(
-            "❌ Fehler beim Abmelden.",
-            true
-        );
-
-        return;
-    }
-
-
-    aktuellerBenutzer =
-        null;
-
-
-    benutzerIstNichtAngemeldet();
-
-    zeigeAuthStatus(
-        "👋 Du wurdest erfolgreich abgemeldet."
-    );
-
-}
-
-
-/* =========================================================
-   BENUTZER ANGEMELDET
-========================================================= */
-
-function benutzerIstAngemeldet(user) {
-
-    if (!user) {
-        return;
-    }
-
-
-    aktuellerBenutzer =
-        user;
-
-
-    const authSection =
-        document.getElementById("authSection");
-
-    const logoutButton =
-        document.getElementById("logoutButton");
-
-    const main =
-        document.querySelector("main");
-
-
-    if (authSection) {
-        authSection.style.display = "none";
-    }
-
-
-    if (logoutButton) {
-        logoutButton.style.display = "block";
-    }
-
-
-    if (main) {
-        main.style.display = "block";
-    }
-
-
-    const username =
-        user.user_metadata?.username ||
-        user.email ||
-        "Benutzer";
-
-
-    console.log(
-        "👤 Angemeldet:",
-        username
-    );
-
-
-    ladeBenutzerFortschritt();
-
-}
-
-
-/* =========================================================
-   BENUTZER NICHT ANGEMELDET
-========================================================= */
-
-function benutzerIstNichtAngemeldet() {
-
-    aktuellerBenutzer =
-        null;
-
-
-    const authSection =
-        document.getElementById("authSection");
-
-    const logoutButton =
-        document.getElementById("logoutButton");
-
-    const main =
-        document.querySelector("main");
-
-
-    if (authSection) {
-        authSection.style.display = "flex";
-    }
-
-
-    if (logoutButton) {
-        logoutButton.style.display = "none";
-    }
-
-
-    if (main) {
-        main.style.display = "none";
-    }
-
-
-    punkte = 0;
-
-    erledigteMissionen = 0;
-
-    missionsPositionen = {};
-
-
-    aktualisiereHUD();
-
-
-    const rewardsContainer =
-        document.getElementById("rewardsContainer");
-
-
-    if (rewardsContainer) {
-        rewardsContainer.innerHTML = "";
-    }
-
-}
-
-
-/* =========================================================
-   FORTSCHRITT LADEN
-========================================================= */
-
-function ladeBenutzerFortschritt() {
-
-    if (!aktuellerBenutzer) {
-        return;
-    }
-
-
-    const punkteKey =
-        userStorageKey("integrations_punkte");
-
-    const erledigtKey =
-        userStorageKey("integrations_erledigte_anzahl");
-
-    const positionKey =
-        userStorageKey("integrations_missions_positionen");
-
-
-    punkte =
-        parseInt(
-            localStorage.getItem(punkteKey) || "0",
-            10
-        );
-
-
-    erledigteMissionen =
-        parseInt(
-            localStorage.getItem(erledigtKey) || "0",
-            10
-        );
-
-
-    try {
-
-        missionsPositionen =
-            JSON.parse(
-                localStorage.getItem(positionKey) || "{}"
-            );
-
-    }
-
-    catch {
-
-        missionsPositionen = {};
-
-    }
-
-
-    aktualisiereHUD();
-
-    renderRewards();
-
-
-    Object.keys(missionen).forEach(
-        kategorie => {
-
-            renderKategorie(
-                kategorie
-            );
-
-        }
-    );
-
-
-    console.log(
-        "⭐ Punkte:",
-        punkte
-    );
-
-    console.log(
-        "✅ Aufgaben:",
-        erledigteMissionen
-    );
-
-}
-
-
-/* =========================================================
-   FORTSCHRITT SPEICHERN
-========================================================= */
-
-function speichereFortschritt() {
-
-    if (!aktuellerBenutzer) {
-        return;
-    }
-
-
-    localStorage.setItem(
-        userStorageKey("integrations_punkte"),
-        String(punkte)
-    );
-
-
-    localStorage.setItem(
-        userStorageKey("integrations_erledigte_anzahl"),
-        String(erledigteMissionen)
-    );
-
-
-    localStorage.setItem(
-        userStorageKey("integrations_missions_positionen"),
-        JSON.stringify(missionsPositionen)
-    );
-
-}
-
-
-/* =========================================================
-   HUD AKTUALISIEREN
-========================================================= */
-
-function aktualisiereHUD() {
-
-    const punkteElement =
-        document.getElementById("punkte");
-
-    const punkteGross =
-        document.getElementById("punkteGross");
-
-    const erledigtElement =
-        document.getElementById("erledigt");
-
-
-    if (punkteElement) {
-        punkteElement.textContent =
-            punkte;
-    }
-
-
-    if (punkteGross) {
-        punkteGross.textContent =
-            punkte;
-    }
-
-
-    if (erledigtElement) {
-        erledigtElement.textContent =
-            erledigteMissionen;
-    }
+    return liste[position];
 
 }
 
@@ -1084,98 +691,76 @@ function zeigeKategorie(
 ) {
 
     document
-        .querySelectorAll(".category-card")
-        .forEach(card => {
+        .querySelectorAll(
+            ".category-content"
+        )
+        .forEach(
+            content => {
 
-            card.classList.remove("active");
+                content.classList.remove(
+                    "active"
+                );
 
-        });
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            ".category-card"
+        )
+        .forEach(
+            card => {
+
+                card.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    const ziel =
+        document.getElementById(
+            kategorie
+        );
+
+
+    if (!ziel) {
+        return;
+    }
+
+
+    ziel.classList.add(
+        "active"
+    );
 
 
     if (element) {
-        element.classList.add("active");
-    }
 
-
-    document
-        .querySelectorAll(".category-content")
-        .forEach(content => {
-
-            content.classList.remove("active");
-
-        });
-
-
-    const content =
-        document.getElementById(kategorie);
-
-
-    if (content) {
-
-        content.classList.add("active");
-
-        renderKategorie(kategorie);
-
-        content.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
+        element.classList.add(
+            "active"
+        );
 
     }
 
 
-    const backButton =
-        document.getElementById("backButton");
+    renderKategorie(
+        kategorie
+    );
 
 
-    if (backButton) {
+    setTimeout(
+        () => {
 
-        backButton.classList.add("show");
+            ziel.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
 
-    }
-
-}
-
-
-/* =========================================================
-   STARTSEITE
-========================================================= */
-
-function zeigeStartseite() {
-
-    document
-        .querySelectorAll(".category-content")
-        .forEach(content => {
-
-            content.classList.remove("active");
-
-        });
-
-
-    document
-        .querySelectorAll(".category-card")
-        .forEach(card => {
-
-            card.classList.remove("active");
-
-        });
-
-
-    const backButton =
-        document.getElementById("backButton");
-
-
-    if (backButton) {
-
-        backButton.classList.remove("show");
-
-    }
-
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+        },
+        50
+    );
 
 }
 
@@ -1184,11 +769,14 @@ function zeigeStartseite() {
    KATEGORIE RENDERN
 ========================================================= */
 
-function renderKategorie(kategorie) {
+function renderKategorie(
+    kategorie
+) {
 
     const container =
         document.getElementById(
-            `missionContainer-${kategorie}`
+            "missionContainer-" +
+            kategorie
         );
 
 
@@ -1197,207 +785,910 @@ function renderKategorie(kategorie) {
     }
 
 
-    const liste =
-        missionen[kategorie];
+    const mission =
+        naechsteMission(
+            kategorie
+        );
 
 
-    if (!liste) {
+    if (!mission) {
+
+        container.innerHTML = `
+            <div class="mission">
+
+                <div style="
+                    text-align:center;
+                    padding:20px;
+                ">
+
+                    <div style="
+                        font-size:50px;
+                        margin-bottom:15px;
+                    ">
+                        🎉
+                    </div>
+
+                    <h2>
+                        Keine Mission vorhanden
+                    </h2>
+
+                </div>
+
+            </div>
+        `;
+
         return;
+
     }
 
 
-    container.innerHTML = "";
-
-
-    liste.forEach(
-        mission => {
-
-            const position =
-                missionsPositionen[mission.id] || 0;
-
-
-            const abgeschlossen =
-                position >= mission.tasks.length;
-
-
-            const missionElement =
-                document.createElement("div");
-
-
-            missionElement.className =
-                "mission";
-
-
-            missionElement.innerHTML = `
-
-                <div class="mission-top">
-
-                    <div class="mission-icon">
-                        ${mission.icon}
-                    </div>
-
-                    <div class="points">
-                        ${mission.tasks.reduce(
-                            (sum, task) =>
-                                sum + task.points,
-                            0
-                        )} ⭐
-                    </div>
-
-                </div>
-
-
-                <h3>
-                    ${mission.title}
-                </h3>
-
-
-                <p>
-                    ${mission.description}
-                </p>
-
-
-                <div
-                    class="mission-workspace show"
-                >
-
-                    <div class="task">
-
-                        ${
-                            abgeschlossen
-
-                            ? `
-
-                                <strong>
-                                    🎉 Mission abgeschlossen!
-                                </strong>
-
-                                <p>
-                                    Du hast alle Aufgaben dieser Mission erledigt.
-                                </p>
-
-                            `
-
-                            : `
-
-                                <strong>
-                                    🎯 Aufgabe ${
-                                        position + 1
-                                    } von ${
-                                        mission.tasks.length
-                                    }
-                                </strong>
-
-                                <p>
-                                    ${
-                                        mission.tasks[position].title
-                                    }
-                                </p>
-
-                                <p style="margin-top:8px;">
-                                    ${
-                                        mission.tasks[position].text
-                                    }
-                                </p>
-
-                                ${
-                                    mission.tasks[position].link
-
-                                    ? `
-
-                                        <button
-                                            class="game-button"
-                                            style="margin-top:15px;"
-                                            onclick="oeffneAufgabe('${mission.tasks[position].link}')"
-                                        >
-                                            🌐 Website öffnen
-                                        </button>
-
-                                    `
-
-                                    : ""
-                                }
-
-
-                                <button
-                                    class="mission-button"
-                                    style="margin-top:15px;"
-                                    onclick="aufgabeErledigt(
-                                        '${kategorie}',
-                                        '${mission.id}',
-                                        '${mission.tasks[position].id}',
-                                        ${mission.tasks[position].points}
-                                    )"
-                                >
-                                    ✅ Aufgabe erledigt
-                                </button>
-
-                            `
-
-                        }
-
-                    </div>
-
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                missionElement
-            );
-
-        }
-    );
+    container.innerHTML =
+        missionHTML(
+            kategorie,
+            mission
+        );
 
 }
 
 
 /* =========================================================
-   WEBSITE ÖFFNEN
+   MISSION HTML
 ========================================================= */
 
-function oeffneAufgabe(link) {
-
-    if (!link) {
-        return;
-    }
-
-
-    window.open(
-        link,
-        "_blank",
-        "noopener,noreferrer"
-    );
-
-}
-
-
-/* =========================================================
-   AUFGABE ERLEDIGT
-========================================================= */
-
-function aufgabeErledigt(
+function missionHTML(
     kategorie,
-    missionId,
-    taskId,
-    taskPoints
+    mission
 ) {
 
-    if (!aktuellerBenutzer) {
+    let workspace = "";
 
-        zeigeAuthStatus(
-            "⚠️ Bitte zuerst anmelden.",
-            true
+
+    /* =====================================================
+       INTEGRATIONSKURS
+    ===================================================== */
+
+    if (
+        mission.typ ===
+        "integrationskurs"
+    ) {
+
+        workspace = `
+
+            <a
+                href="https://bamf-navi.bamf.de/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="game-button"
+                onclick="websiteGeoeffnet('${mission.id}')"
+            >
+                🚀 BAMF-NAvI öffnen
+            </a>
+
+            <div class="form-group">
+
+                <label>
+                    📚 Welchen Kurs hast du gefunden?
+                </label>
+
+                <input
+                    id="kursName"
+                    placeholder="z. B. Integrationskurs A1–B1"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    🏢 Welcher Anbieter?
+                </label>
+
+                <input
+                    id="kursAnbieter"
+                    placeholder="z. B. VHS München"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    📍 Wo findet der Kurs statt?
+                </label>
+
+                <input
+                    id="kursOrt"
+                    placeholder="z. B. München"
+                >
+
+            </div>
+
+            <button
+                class="game-button"
+                onclick="spezielleMissionAbschliessen('${mission.id}')"
+            >
+                ✅ Aufgabe abschließen
+            </button>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       KITA
+    ===================================================== */
+
+    else if (
+        mission.typ === "kita"
+    ) {
+
+        workspace = `
+
+            <a
+                href="https://kitafinder.muenchen.de/elternportal/de/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="game-button"
+                onclick="websiteGeoeffnet('${mission.id}')"
+            >
+                🚀 Kita-Finder öffnen
+            </a>
+
+            <div class="form-group">
+
+                <label>
+                    🏫 Welche Kita hast du gefunden?
+                </label>
+
+                <input
+                    id="kitaName"
+                    placeholder="Name der Kita"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    📍 Wo befindet sich die Kita?
+                </label>
+
+                <input
+                    id="kitaOrt"
+                    placeholder="Adresse oder Stadtteil"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    📋 Was hast du über die Anmeldung herausgefunden?
+                </label>
+
+                <textarea
+                    id="kitaInfo"
+                    rows="4"
+                    placeholder="z. B. Online-Anmeldung, Warteliste..."
+                ></textarea>
+
+            </div>
+
+            <button
+                class="game-button"
+                onclick="spezielleMissionAbschliessen('${mission.id}')"
+            >
+                ✅ Aufgabe abschließen
+            </button>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       SOZIALBÜRGERHAUS
+    ===================================================== */
+
+    else if (
+        mission.typ === "sozial"
+    ) {
+
+        workspace = `
+
+            <div class="form-group">
+
+                <label>
+                    📍 Deine Postleitzahl
+                </label>
+
+                <input
+                    type="text"
+                    id="sozialPLZ"
+                    maxlength="5"
+                    inputmode="numeric"
+                    placeholder="z. B. 80331"
+                    oninput="sozialPLZSuche()"
+                >
+
+            </div>
+
+            <div
+                id="sozialHinweis"
+                style="
+                    margin-top:12px;
+                    color:#667085;
+                "
+            >
+                💡 Gib deine 5-stellige PLZ ein.
+            </div>
+
+            <div
+                id="sozialErgebnis"
+                style="
+                    display:none;
+                    margin-top:20px;
+                    padding:20px;
+                    background:#f0fdf4;
+                    border:2px solid #86efac;
+                    border-radius:15px;
+                "
+            >
+
+                <h3>
+                    🏛️ Dein Sozialbürgerhaus
+                </h3>
+
+                <p style="margin-top:15px;">
+                    <strong>🏛️ Name</strong><br>
+                    <span id="sozialName"></span>
+                </p>
+
+                <p style="margin-top:10px;">
+                    <strong>📍 Adresse</strong><br>
+                    <span id="sozialAdresse"></span>
+                </p>
+
+                <p style="margin-top:10px;">
+                    <strong>☎️ Telefon</strong><br>
+                    <span id="sozialTelefon"></span>
+                </p>
+
+                <button
+                    class="game-button"
+                    onclick="spezielleMissionAbschliessen('${mission.id}')"
+                >
+                    ✅ Aufgabe abschließen
+                </button>
+
+            </div>
+
+            <div
+                id="sozialNichtGefunden"
+                style="
+                    display:none;
+                    margin-top:20px;
+                    padding:18px;
+                    background:#fff7ed;
+                    border:2px solid #fed7aa;
+                    border-radius:15px;
+                "
+            >
+
+                ❌ Für diese PLZ wurde kein
+                Sozialbürgerhaus gefunden.
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       MOBILITÄT
+    ===================================================== */
+
+    else if (
+        mission.typ === "mobilitaet"
+    ) {
+
+        workspace = `
+
+            <a
+                href="https://www.mvv-muenchen.de/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="game-button"
+                onclick="websiteGeoeffnet('${mission.id}')"
+            >
+                🚀 MVV öffnen
+            </a>
+
+            <div class="form-group">
+
+                <label>
+                    📍 Start
+                </label>
+
+                <input
+                    id="mvvStart"
+                    placeholder="z. B. München Hauptbahnhof"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    🎯 Ziel
+                </label>
+
+                <input
+                    id="mvvZiel"
+                    placeholder="z. B. Jobcenter München"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    🚉 Verbindung
+                </label>
+
+                <input
+                    id="mvvVerbindung"
+                    placeholder="z. B. U2 + Bus 54"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    ⏱️ Fahrzeit
+                </label>
+
+                <input
+                    id="mvvDauer"
+                    placeholder="z. B. 32 Minuten"
+                >
+
+            </div>
+
+            <button
+                class="game-button"
+                onclick="spezielleMissionAbschliessen('${mission.id}')"
+            >
+                ✅ Aufgabe abschließen
+            </button>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       AUSLÄNDERBEHÖRDE
+    ===================================================== */
+
+    else if (
+        mission.typ === "auslaender"
+    ) {
+
+        workspace = `
+
+            <a
+                href="https://stadt.muenchen.de/infos/sze-online.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="game-button"
+                onclick="websiteGeoeffnet('${mission.id}')"
+            >
+                🚀 Ausländerbehörde öffnen
+            </a>
+
+            <div class="form-group">
+
+                <label>
+                    🎯 Was hast du gesucht?
+                </label>
+
+                <input
+                    id="auslaenderAnliegen"
+                    placeholder="z. B. Aufenthaltstitel verlängern"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    📋 Was hast du gefunden?
+                </label>
+
+                <textarea
+                    id="auslaenderErgebnis"
+                    rows="4"
+                    placeholder="Beschreibe dein Ergebnis..."
+                ></textarea>
+
+            </div>
+
+            <button
+                class="game-button"
+                onclick="spezielleMissionAbschliessen('${mission.id}')"
+            >
+                ✅ Aufgabe abschließen
+            </button>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       JOBCENTER
+    ===================================================== */
+
+    else if (
+        mission.typ === "jobcenter"
+    ) {
+
+        workspace = `
+
+            <a
+                href="https://www.jobcenter.digital/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="game-button"
+                onclick="websiteGeoeffnet('${mission.id}')"
+            >
+                🚀 Jobcenter.digital öffnen
+            </a>
+
+            <div class="form-group">
+
+                <label>
+                    🎯 Welche Aufgabe hast du erledigt?
+                </label>
+
+                <select id="jobTask">
+
+                    <option value="">
+                        Bitte auswählen
+                    </option>
+
+                    <option>
+                        🔐 Anmeldung / Registrierung
+                    </option>
+
+                    <option>
+                        ✉️ Nachricht geschrieben
+                    </option>
+
+                    <option>
+                        📄 Antrag gesucht
+                    </option>
+
+                    <option>
+                        📎 Unterlagen hochgeladen
+                    </option>
+
+                    <option>
+                        📅 Termin vereinbart
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    📋 Ergebnis
+                </label>
+
+                <textarea
+                    id="jobResult"
+                    rows="4"
+                    placeholder="Was hast du erledigt?"
+                ></textarea>
+
+            </div>
+
+            <button
+                class="game-button"
+                onclick="spezielleMissionAbschliessen('${mission.id}')"
+            >
+                ✅ Aufgabe abschließen
+            </button>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       WOHNUNG
+    ===================================================== */
+
+    else if (
+        mission.typ === "wohnung"
+    ) {
+
+        workspace = `
+
+            <a
+                href="https://sowon.muenchen.de/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="game-button"
+                onclick="websiteGeoeffnet('${mission.id}')"
+            >
+                🏠 SOWON öffnen
+            </a>
+
+            <div class="form-group">
+
+                <label>
+                    🏠 Was möchtest du bei SOWON machen?
+                </label>
+
+                <select id="wohnungAufgabe">
+
+                    <option value="">
+                        Bitte auswählen
+                    </option>
+
+                    <option>
+                        📝 Wohnungsantrag stellen
+                    </option>
+
+                    <option>
+                        🔎 Wohnung suchen
+                    </option>
+
+                    <option>
+                        📄 Antrag bearbeiten
+                    </option>
+
+                    <option>
+                        📬 Bewerbung prüfen
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    📋 Was hast du herausgefunden?
+                </label>
+
+                <textarea
+                    id="wohnungErgebnis"
+                    rows="4"
+                    placeholder="Beschreibe kurz dein Ergebnis..."
+                ></textarea>
+
+            </div>
+
+            <button
+                class="game-button"
+                onclick="spezielleMissionAbschliessen('${mission.id}')"
+            >
+                ✅ Aufgabe abschließen
+            </button>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       AGENTUR FÜR ARBEIT
+    ===================================================== */
+
+    else if (
+        mission.typ === "arbeit"
+    ) {
+
+        workspace = `
+
+            <a
+                href="https://www.arbeitsagentur.de/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="game-button"
+                onclick="websiteGeoeffnet('${mission.id}')"
+            >
+                🚀 Agentur für Arbeit öffnen
+            </a>
+
+            <div class="form-group">
+
+                <label>
+                    🎯 Was hast du gesucht?
+                </label>
+
+                <select id="arbeitSuche">
+
+                    <option value="">
+                        Bitte auswählen
+                    </option>
+
+                    <option>
+                        💼 Stellenangebot
+                    </option>
+
+                    <option>
+                        🎓 Ausbildung
+                    </option>
+
+                    <option>
+                        📚 Weiterbildung
+                    </option>
+
+                    <option>
+                        🤝 Beratung
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    📋 Was hast du gefunden?
+                </label>
+
+                <textarea
+                    id="arbeitErgebnis"
+                    rows="4"
+                    placeholder="Beschreibe dein Ergebnis..."
+                ></textarea>
+
+            </div>
+
+            <button
+                class="game-button"
+                onclick="spezielleMissionAbschliessen('${mission.id}')"
+            >
+                ✅ Aufgabe abschließen
+            </button>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       NORMALE TEXT-MISSION
+    ===================================================== */
+
+    else {
+
+        workspace = `
+
+            <div class="form-group">
+
+                <label>
+                    📝 Was hast du herausgefunden?
+                </label>
+
+                <textarea
+                    id="allgemeinErgebnis"
+                    rows="4"
+                    placeholder="Beschreibe kurz dein Ergebnis..."
+                ></textarea>
+
+            </div>
+
+            <button
+                class="game-button"
+                onclick="allgemeineMissionAbschliessen('${mission.id}')"
+            >
+                ✅ Aufgabe abschließen
+            </button>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       KOMPLETTE MISSION
+    ===================================================== */
+
+    return `
+
+        <div
+            class="mission"
+            id="mission-${mission.id}"
+        >
+
+            <div class="mission-top">
+
+                <div class="mission-icon">
+                    ${mission.icon}
+                </div>
+
+                <div class="points">
+                    +${mission.punkte} ⭐
+                </div>
+
+            </div>
+
+            <h3>
+                ${mission.titel}
+            </h3>
+
+            <p>
+                ${mission.beschreibung}
+            </p>
+
+            <button
+                class="mission-button"
+                onclick="arbeitsbereichOeffnen('${mission.id}')"
+            >
+                🔎 Mission starten
+            </button>
+
+            <div
+                class="mission-workspace"
+                id="workspace-${mission.id}"
+            >
+
+                ${workspace}
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   MISSION STARTEN
+========================================================= */
+
+function arbeitsbereichOeffnen(
+    missionId
+) {
+
+    const workspace =
+        document.getElementById(
+            "workspace-" +
+            missionId
+        );
+
+
+    if (!workspace) {
+        return;
+    }
+
+
+    workspace.classList.add(
+        "show"
+    );
+
+
+    setTimeout(
+        () => {
+
+            workspace.scrollIntoView({
+
+                behavior: "smooth",
+
+                block: "center"
+
+            });
+
+        },
+        50
+    );
+
+}
+
+
+/* =========================================================
+   WEBSITE GEÖFFNET
+========================================================= */
+
+function websiteGeoeffnet(missionId) {
+
+    localStorage.setItem(
+        "website_geoeffnet_" + missionId,
+        "true"
+    );
+
+    if (
+        typeof chatbotExterneWebsiteStarten === "function"
+    ) {
+
+        const kategorie =
+            findeKategorie(missionId);
+
+        chatbotExterneWebsiteStarten(
+            kategorie,
+            missionId
+        );
+    }
+}
+
+
+beraterChatOeffnen(
+    localStorage.getItem("chatbot_kategorie"),
+    localStorage.getItem("chatbot_mission")
+);
+
+function websiteWurdeGeoeffnet(
+    missionId
+) {
+
+    return localStorage.getItem(
+
+        "website_geoeffnet_" +
+        missionId
+
+    ) === "true";
+
+}
+
+
+/* =========================================================
+   NORMALE MISSION ABSCHLIESSEN
+========================================================= */
+
+function allgemeineMissionAbschliessen(
+    missionId
+) {
+
+    const ergebnis =
+        document.getElementById(
+            "allgemeinErgebnis"
+        );
+
+
+    if (
+        !ergebnis ||
+        !ergebnis.value.trim()
+    ) {
+
+        alert(
+            "Bitte beschreibe zuerst kurz dein Ergebnis."
         );
 
         return;
+
     }
 
 
+    missionAbschliessen(
+        missionId
+    );
+
+}
+
+
+/* =========================================================
+   SPEZIELLE MISSIONEN
+========================================================= */
+
+function spezielleMissionAbschliessen(
+    missionId
+) {
+
     const mission =
-        missionen[kategorie]?.find(
-            m => m.id === missionId
+        findeMission(
+            missionId
         );
 
 
@@ -1406,167 +1697,1049 @@ function aufgabeErledigt(
     }
 
 
-    const position =
-        missionsPositionen[missionId] || 0;
+    /* =====================================================
+       INTEGRATIONSKURS
+    ===================================================== */
+
+    if (
+        mission.typ ===
+        "integrationskurs"
+    ) {
+
+        const kurs =
+            document.getElementById(
+                "kursName"
+            )?.value.trim();
 
 
-    const task =
-        mission.tasks[position];
+        const anbieter =
+            document.getElementById(
+                "kursAnbieter"
+            )?.value.trim();
 
 
-    if (!task) {
-        return;
+        const ort =
+            document.getElementById(
+                "kursOrt"
+            )?.value.trim();
+
+
+        if (
+            !kurs ||
+            !anbieter ||
+            !ort
+        ) {
+
+            alert(
+                "Bitte fülle Kurs, Anbieter und Ort aus."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !websiteWurdeGeoeffnet(
+                missionId
+            )
+        ) {
+
+            alert(
+                "Bitte öffne zuerst das BAMF-NAvI."
+            );
+
+            return;
+
+        }
+
     }
 
 
-    if (task.id !== taskId) {
-        return;
+    /* =====================================================
+       KITA
+    ===================================================== */
+
+    if (
+        mission.typ === "kita"
+    ) {
+
+        const name =
+            document.getElementById(
+                "kitaName"
+            )?.value.trim();
+
+
+        const ort =
+            document.getElementById(
+                "kitaOrt"
+            )?.value.trim();
+
+
+        const info =
+            document.getElementById(
+                "kitaInfo"
+            )?.value.trim();
+
+
+        if (
+            !name ||
+            !ort ||
+            !info
+        ) {
+
+            alert(
+                "Bitte fülle alle Felder aus."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !websiteWurdeGeoeffnet(
+                missionId
+            )
+        ) {
+
+            alert(
+                "Bitte öffne zuerst den Kita-Finder."
+            );
+
+            return;
+
+        }
+
     }
 
 
-    punkte +=
-        Number(taskPoints) || task.points;
+    /* =====================================================
+       SOZIALBÜRGERHAUS
+    ===================================================== */
+
+    if (
+        mission.typ === "sozial"
+    ) {
+
+        const gespeichert =
+            localStorage.getItem(
+                "sozialbuergerhaus_gefunden"
+            );
 
 
-    erledigteMissionen++;
+        if (!gespeichert) {
+
+            alert(
+                "Bitte gib zuerst deine PLZ ein und finde dein Sozialbürgerhaus."
+            );
+
+            return;
+
+        }
+
+    }
 
 
-    missionsPositionen[missionId] =
-        position + 1;
+    /* =====================================================
+       MOBILITÄT
+    ===================================================== */
+
+    if (
+        mission.typ === "mobilitaet"
+    ) {
+
+        const start =
+            document.getElementById(
+                "mvvStart"
+            )?.value.trim();
 
 
-    speichereFortschritt();
+        const ziel =
+            document.getElementById(
+                "mvvZiel"
+            )?.value.trim();
 
 
-    aktualisiereHUD();
+        const verbindung =
+            document.getElementById(
+                "mvvVerbindung"
+            )?.value.trim();
 
 
-    renderRewards();
+        const dauer =
+            document.getElementById(
+                "mvvDauer"
+            )?.value.trim();
 
 
-    renderKategorie(
-        kategorie
+        if (
+            !start ||
+            !ziel ||
+            !verbindung ||
+            !dauer
+        ) {
+
+            alert(
+                "Bitte fülle alle Felder aus."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !websiteWurdeGeoeffnet(
+                missionId
+            )
+        ) {
+
+            alert(
+                "Bitte öffne zuerst die MVV-Seite."
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       AUSLÄNDERBEHÖRDE
+    ===================================================== */
+
+    if (
+        mission.typ === "auslaender"
+    ) {
+
+        const anliegen =
+            document.getElementById(
+                "auslaenderAnliegen"
+            )?.value.trim();
+
+
+        const ergebnis =
+            document.getElementById(
+                "auslaenderErgebnis"
+            )?.value.trim();
+
+
+        if (
+            !anliegen ||
+            !ergebnis
+        ) {
+
+            alert(
+                "Bitte fülle alle Felder aus."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !websiteWurdeGeoeffnet(
+                missionId
+            )
+        ) {
+
+            alert(
+                "Bitte öffne zuerst die Website der Ausländerbehörde."
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       WOHNUNG
+    ===================================================== */
+
+    if (
+        mission.typ === "wohnung"
+    ) {
+
+        const aufgabe =
+            document.getElementById(
+                "wohnungAufgabe"
+            )?.value;
+
+
+        const ergebnis =
+            document.getElementById(
+                "wohnungErgebnis"
+            )?.value.trim();
+
+
+        if (
+            !aufgabe ||
+            !ergebnis
+        ) {
+
+            alert(
+                "Bitte wähle eine Aufgabe aus und beschreibe dein Ergebnis."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !websiteWurdeGeoeffnet(
+                missionId
+            )
+        ) {
+
+            alert(
+                "Bitte öffne zuerst die SOWON-Seite."
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       JOBCENTER
+    ===================================================== */
+
+    if (
+        mission.typ === "jobcenter"
+    ) {
+
+        const task =
+            document.getElementById(
+                "jobTask"
+            )?.value;
+
+
+        const result =
+            document.getElementById(
+                "jobResult"
+            )?.value.trim();
+
+
+        if (
+            !task ||
+            !result
+        ) {
+
+            alert(
+                "Bitte wähle eine Aufgabe und beschreibe dein Ergebnis."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !websiteWurdeGeoeffnet(
+                missionId
+            )
+        ) {
+
+            alert(
+                "Bitte öffne zuerst Jobcenter.digital."
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       AGENTUR FÜR ARBEIT
+    ===================================================== */
+
+    if (
+        mission.typ === "arbeit"
+    ) {
+
+        const suche =
+            document.getElementById(
+                "arbeitSuche"
+            )?.value;
+
+
+        const ergebnis =
+            document.getElementById(
+                "arbeitErgebnis"
+            )?.value.trim();
+
+
+        if (
+            !suche ||
+            !ergebnis
+        ) {
+
+            alert(
+                "Bitte fülle alle Felder aus."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            !websiteWurdeGeoeffnet(
+                missionId
+            )
+        ) {
+
+            alert(
+                "Bitte öffne zuerst die Website der Agentur für Arbeit."
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    missionAbschliessen(
+        missionId
     );
-
-
-    zeigeErfolg(
-        task.points
-    );
-
-
-    pruefeRewardFreischaltung();
 
 }
 
 
 /* =========================================================
-   ERFOLGSANZEIGE
+   MISSION SUCHEN
 ========================================================= */
 
-function zeigeErfolg(
-    taskPoints
+function findeMission(
+    missionId
 ) {
 
-    const overlay =
-        document.getElementById(
-            "rewardModalOverlay"
+    for (
+        const kategorie in missionen
+    ) {
+
+        const gefunden =
+            missionen[kategorie].find(
+                mission =>
+                    mission.id ===
+                    missionId
+            );
+
+
+        if (gefunden) {
+
+            return gefunden;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   KATEGORIE EINER MISSION FINDEN
+========================================================= */
+
+function findeKategorie(
+    missionId
+) {
+
+    for (
+        const kategorie in missionen
+    ) {
+
+        if (
+            missionen[kategorie].some(
+                mission =>
+                    mission.id ===
+                    missionId
+            )
+        ) {
+
+            return kategorie;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   MISSION ABSCHLIESSEN
+
+   DAS IST DER WICHTIGSTE TEIL.
+
+   Nach Abschluss:
+
+   1. Punkte hinzufügen
+   2. Gesamtzahl erledigter Missionen erhöhen
+   3. Position um 1 erhöhen
+   4. Nach letzter Mission wieder auf 0
+   5. Website-Status löschen
+   6. Erfolg anzeigen
+   7. Danach neue Mission frisch rendern
+========================================================= */
+
+function missionAbschliessen(
+    missionId
+) {
+
+    const mission =
+        findeMission(
+            missionId
         );
 
 
-    if (!overlay) {
+    if (!mission) {
         return;
     }
 
 
-    overlay.innerHTML = `
+    const kategorie =
+        findeKategorie(
+            missionId
+        );
 
-        <div
-            class="reward-modal"
-            onclick="event.stopPropagation()"
-        >
 
-            <button
-                class="reward-modal-close"
-                onclick="schliesseRewardModal()"
-            >
-                ✕
-            </button>
+    if (!kategorie) {
+        return;
+    }
 
-            <div class="reward-modal-badge">
-                Aufgabe geschafft!
-            </div>
 
-            <div class="reward-modal-icon">
+    /* =====================================================
+       PUNKTE DAZURECHNEN
+
+       WICHTIG:
+       Die Mission darf wiederholt Punkte geben.
+    ===================================================== */
+
+    punkte +=
+        mission.punkte;
+
+
+    /* =====================================================
+       ERLEDIGTE MISSIONEN ZÄHLEN
+    ===================================================== */
+
+    erledigteMissionen++;
+
+
+    /* =====================================================
+       POSITION ERHÖHEN
+
+       Beispiel:
+
+       Mission 1 = Position 0
+       Mission 2 = Position 1
+       Mission 3 = Position 2
+
+       danach:
+
+       Position 0
+       → Mission 1 wieder
+    ===================================================== */
+
+    let position =
+        holeMissionsPosition(
+            kategorie
+        );
+
+
+    position++;
+
+
+    const liste =
+        missionen[kategorie];
+
+
+    if (
+        position >= liste.length
+    ) {
+
+        position = 0;
+
+    }
+
+
+    missionsPositionen[kategorie] =
+        position;
+
+
+    /* =====================================================
+       SPEICHERN
+    ===================================================== */
+
+    localStorage.setItem(
+        "integrations_punkte",
+        punkte
+    );
+
+
+    localStorage.setItem(
+        "integrations_erledigte_anzahl",
+        erledigteMissionen
+    );
+
+
+    speichereMissionsPositionen();
+
+
+    /* =====================================================
+       WEBSITE FÜR DIESE MISSION ZURÜCKSETZEN
+
+       Dadurch muss bei der nächsten Runde
+       die Website wieder neu geöffnet werden.
+    ===================================================== */
+
+    localStorage.removeItem(
+        "website_geoeffnet_" +
+        missionId
+    );
+
+
+    /* =====================================================
+       SOZIALBÜRGERHAUS ZURÜCKSETZEN
+    ===================================================== */
+
+    if (
+        mission.typ === "sozial"
+    ) {
+
+        localStorage.removeItem(
+            "sozialbuergerhaus_gefunden"
+        );
+
+    }
+
+
+    /* =====================================================
+       HUD
+    ===================================================== */
+
+    aktualisiereHUD();
+
+
+    /* =====================================================
+       REWARDS PRÜFEN
+    ===================================================== */
+
+    pruefeRewards();
+
+
+    /* =====================================================
+       ERFOLGSANZEIGE
+    ===================================================== */
+
+    const container =
+        document.getElementById(
+            "missionContainer-" +
+            kategorie
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML = `
+
+        <div class="success-box show">
+
+            <div style="
+                font-size:45px;
+                margin-bottom:10px;
+            ">
                 🎉
             </div>
 
             <h2>
-                Sehr gut!
+                Aufgabe geschafft!
             </h2>
 
-            <p class="reward-modal-text">
-                Du hast eine Aufgabe erfolgreich abgeschlossen.
+            <p style="margin-top:8px;">
+
+                Du hast
+
+                <strong>
+                    +${mission.punkte} Punkte
+                </strong>
+
+                gesammelt.
+
             </p>
 
-            <div class="reward-modal-points">
-                ⭐ +${taskPoints} Punkte
-            </div>
+            <p style="
+                margin-top:10px;
+                font-weight:bold;
+            ">
 
-            <br>
+                ⭐ Dein Punktestand:
+                ${punkte}
 
-            <button
-                class="reward-modal-button"
-                onclick="schliesseRewardModal()"
-            >
-                Weiter 🚀
-            </button>
+            </p>
+
+        </div>
+
+        <div class="next-mission show">
+
+            <h3>
+                🚀 Sehr gut!
+            </h3>
+
+            <p>
+                Die nächste Mission wartet auf dich.
+            </p>
 
         </div>
 
     `;
 
 
-    overlay.classList.add("show");
+    /* =====================================================
+       NEUE MISSION
 
+       Nach 1,8 Sekunden wird die neue Mission
+       komplett neu aufgebaut.
 
-    erzeugeKonfetti();
+       Dadurch ist sie wieder:
+       - geschlossen
+       - leere Felder
+       - neuer Start-Button
+       - wie beim ersten Mal
+    ===================================================== */
+
+    setTimeout(
+        () => {
+
+            naechsteMissionAnzeigen(
+                kategorie
+            );
+
+        },
+        1800
+    );
 
 }
 
 
 /* =========================================================
-   REWARD FREISCHALTUNG
+   NÄCHSTE MISSION ANZEIGEN
 ========================================================= */
 
-function pruefeRewardFreischaltung() {
+function naechsteMissionAnzeigen(
+    kategorie
+) {
 
-    const vorherige =
-        JSON.parse(
-            localStorage.getItem(
-                userStorageKey("integrations_rewards")
-            ) || "[]"
+    /*
+       Wichtig:
+
+       renderKategorie() holt automatisch
+       die neue Position.
+    */
+
+    renderKategorie(
+        kategorie
+    );
+
+
+    const container =
+        document.getElementById(
+            "missionContainer-" +
+            kategorie
         );
 
 
-    const neueFreigeschaltete =
-        [];
+    if (container) {
 
+        setTimeout(
+            () => {
+
+                container.scrollIntoView({
+
+                    behavior: "smooth",
+
+                    block: "center"
+
+                });
+
+            },
+            100
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SOZIALBÜRGERHAUS PLZ-SUCHE
+========================================================= */
+
+function sozialPLZSuche() {
+
+    const input =
+        document.getElementById(
+            "sozialPLZ"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    input.value =
+        input.value.replace(
+            /\D/g,
+            ""
+        );
+
+
+    const plz =
+        input.value.trim();
+
+
+    const ergebnis =
+        document.getElementById(
+            "sozialErgebnis"
+        );
+
+
+    const nichtGefunden =
+        document.getElementById(
+            "sozialNichtGefunden"
+        );
+
+
+    const hinweis =
+        document.getElementById(
+            "sozialHinweis"
+        );
+
+
+    if (ergebnis) {
+
+        ergebnis.style.display =
+            "none";
+
+    }
+
+
+    if (nichtGefunden) {
+
+        nichtGefunden.style.display =
+            "none";
+
+    }
+
+
+    if (
+        plz.length < 5
+    ) {
+
+        if (hinweis) {
+
+            hinweis.textContent =
+                "💡 Gib deine 5-stellige PLZ ein.";
+
+        }
+
+        return;
+
+    }
+
+
+    const gefunden =
+        sozialbuergerhaeuser.find(
+            haus =>
+                haus.plz.includes(
+                    plz
+                )
+        );
+
+
+    if (gefunden) {
+
+        document.getElementById(
+            "sozialName"
+        ).textContent =
+            gefunden.name;
+
+
+        document.getElementById(
+            "sozialAdresse"
+        ).textContent =
+            gefunden.adresse;
+
+
+        document.getElementById(
+            "sozialTelefon"
+        ).textContent =
+            gefunden.telefon;
+
+
+        ergebnis.style.display =
+            "block";
+
+
+        hinweis.textContent =
+            "✅ Sozialbürgerhaus gefunden!";
+
+
+        localStorage.setItem(
+            "sozialbuergerhaus_gefunden",
+            JSON.stringify(
+                gefunden
+            )
+        );
+
+    }
+
+    else {
+
+        nichtGefunden.style.display =
+            "block";
+
+
+        hinweis.textContent =
+            "⚠️ Für diese PLZ wurde kein Sozialbürgerhaus gefunden.";
+
+
+        localStorage.removeItem(
+            "sozialbuergerhaus_gefunden"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   HUD AKTUALISIEREN
+========================================================= */
+
+function aktualisiereHUD() {
+
+    const punkteElement =
+        document.getElementById(
+            "punkte"
+        );
+
+
+    const punkteGrossElement =
+        document.getElementById(
+            "punkteGross"
+        );
+
+
+    const erledigtElement =
+        document.getElementById(
+            "erledigt"
+        );
+
+
+    if (punkteElement) {
+
+        punkteElement.textContent =
+            punkte;
+
+    }
+
+
+    if (punkteGrossElement) {
+
+        punkteGrossElement.textContent =
+            punkte;
+
+    }
+
+
+    if (erledigtElement) {
+
+        erledigtElement.textContent =
+            erledigteMissionen;
+
+    }
+
+}
+
+
+/* =========================================================
+   REWARDS PRÜFEN
+
+   WICHTIG:
+
+   Jeder Reward wird nur EIN EINZIGES MAL
+   freigeschaltet.
+
+   Auch wenn der Benutzer danach weiter Punkte
+   sammelt, erscheint derselbe Reward nicht nochmal.
+========================================================= */
+
+function pruefeRewards() {
 
     rewards.forEach(
         reward => {
 
             if (
-                punkte >= reward.points &&
-                !vorherige.includes(reward.id)
+                punkte >=
+                reward.punkte
             ) {
 
-                vorherige.push(
-                    reward.id
-                );
+                const rewardKey =
+                    "reward_erreicht_" +
+                    reward.id;
 
-                neueFreigeschaltete.push(
-                    reward
-                );
+
+                const bereitsErreicht =
+                    localStorage.getItem(
+                        rewardKey
+                    );
+
+
+                if (
+                    !bereitsErreicht
+                ) {
+
+                    /*
+                       Reward dauerhaft speichern
+                    */
+
+                    localStorage.setItem(
+                        rewardKey,
+                        "true"
+                    );
+
+
+                    /*
+                       Reward anzeigen
+                    */
+
+                    zeigeNeuenReward(
+                        reward
+                    );
+
+                }
 
             }
 
@@ -1574,28 +2747,13 @@ function pruefeRewardFreischaltung() {
     );
 
 
-    localStorage.setItem(
-        userStorageKey("integrations_rewards"),
-        JSON.stringify(vorherige)
-    );
-
-
     renderRewards();
-
-
-    if (neueFreigeschaltete.length > 0) {
-
-        zeigeRewardFreigeschaltet(
-            neueFreigeschaltete[0]
-        );
-
-    }
 
 }
 
 
 /* =========================================================
-   REWARDS RENDERN
+   REWARDS ANZEIGEN
 ========================================================= */
 
 function renderRewards() {
@@ -1611,189 +2769,114 @@ function renderRewards() {
     }
 
 
-    if (!aktuellerBenutzer) {
+    const erreichteRewards =
+        rewards.filter(
+            reward => {
 
-        container.innerHTML =
-            "";
+                return (
+                    localStorage.getItem(
+                        "reward_erreicht_" +
+                        reward.id
+                    ) === "true"
+                );
 
-        return;
-    }
-
-
-    const freigeschaltet =
-        JSON.parse(
-            localStorage.getItem(
-                userStorageKey("integrations_rewards")
-            ) || "[]"
+            }
         );
 
 
-    container.innerHTML = "";
+    if (
+        erreichteRewards.length === 0
+    ) {
 
+        container.innerHTML = "";
 
-    rewards.forEach(
-        reward => {
-
-            const unlocked =
-                freigeschaltet.includes(
-                    reward.id
-                );
-
-
-            const div =
-                document.createElement("div");
-
-
-            div.className =
-                "reward" +
-                (
-                    unlocked
-                        ? " unlocked"
-                        : ""
-                );
-
-
-            div.innerHTML = `
-
-                <div class="reward-icon">
-                    ${reward.icon}
-                </div>
-
-                <h3>
-                    ${reward.name}
-                </h3>
-
-                <p>
-                    ${reward.description}
-                </p>
-
-                <div class="reward-points">
-                    ${reward.points} ⭐
-                </div>
-
-                <div class="reward-status">
-                    ${
-                        unlocked
-                            ? "✅ Freigeschaltet"
-                            : `🔒 Noch ${Math.max(
-                                0,
-                                reward.points - punkte
-                              )} Punkte`
-                    }
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                div
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   REWARD FREIGESCHALTET POPUP
-========================================================= */
-
-function zeigeRewardFreigeschaltet(
-    reward
-) {
-
-    const overlay =
-        document.getElementById(
-            "rewardModalOverlay"
-        );
-
-
-    if (!overlay) {
         return;
+
     }
 
 
-    overlay.innerHTML = `
+    /*
+       Der zuletzt erreichte Reward
+       wird angezeigt.
+    */
 
-        <div
-            class="reward-modal"
-            onclick="event.stopPropagation()"
-        >
+    const reward =
+        erreichteRewards
+            .sort(
+                (a, b) =>
+                    b.punkte -
+                    a.punkte
+            )[0];
 
-            <button
-                class="reward-modal-close"
-                onclick="schliesseRewardModal()"
-            >
-                ✕
-            </button>
 
-            <div class="reward-modal-badge">
-                Neue Belohnung!
+    container.innerHTML = `
+
+        <div class="reward unlocked reward-animation">
+
+            <div class="reward-icon">
+                ${reward.icon}
             </div>
 
-            <div class="reward-modal-icon">
-                ${reward.icon}
+            <div class="reward-title">
+                🎉 Dein Reward
             </div>
 
             <h2>
                 ${reward.name}
             </h2>
 
-            <p class="reward-modal-text">
-                ${reward.description}
+            <p>
+                ${reward.beschreibung}
             </p>
 
-            <div class="reward-modal-points">
-                🏆 Freigeschaltet!
+            <div class="reward-points">
+                ⭐ ${reward.punkte} Punkte
             </div>
 
-            <br>
-
-            <button
-                class="reward-modal-button"
-                onclick="schliesseRewardModal()"
-            >
-                Großartig! 🎉
-            </button>
+            <div class="reward-status">
+                🎁 Freigeschaltet!
+            </div>
 
         </div>
 
     `;
 
+}
 
-    overlay.classList.add("show");
+/* =========================================================
+   REWARD-MUSIK
+========================================================= */
 
+function spieleRewardMusik() {
 
-    erzeugeKonfetti();
+    const audio = document.getElementById("rewardMusic");
 
+    if (!audio) return;
+
+    audio.currentTime = 0;
+
+    audio.play().catch(() => {
+        // Browser kann Audio blockieren – kein Fehler anzeigen
+    });
 }
 
 
 /* =========================================================
-   REWARD MODAL SCHLIESSEN
+   REWARD-POPUP SCHLIESSEN
 ========================================================= */
 
 function schliesseRewardModal() {
 
     const overlay =
-        document.getElementById(
-            "rewardModalOverlay"
-        );
+        document.getElementById("rewardModalOverlay");
 
+    if (!overlay) return;
 
-    if (!overlay) {
-        return;
-    }
-
-
-    overlay.classList.remove(
-        "show"
-    );
-
+    overlay.classList.remove("show");
 
     overlay.innerHTML = "";
 
+    document.body.classList.remove("reward-modal-open");
 }
 
 
@@ -1801,84 +2884,170 @@ function schliesseRewardModal() {
    KONFETTI
 ========================================================= */
 
-function erzeugeKonfetti() {
+function starteKonfetti() {
 
     const overlay =
-        document.getElementById(
-            "rewardModalOverlay"
-        );
+        document.getElementById("rewardModalOverlay");
 
+    if (!overlay) return;
 
-    if (!overlay) {
-        return;
-    }
+    const anzahl = 45;
 
+    for (let i = 0; i < anzahl; i++) {
 
-    for (
-        let i = 0;
-        i < 40;
-        i++
-    ) {
-
-        const piece =
+        const confetti =
             document.createElement("div");
 
+        confetti.className = "confetti-piece";
 
-        piece.className =
-            "confetti-piece";
-
-
-        piece.style.left =
+        confetti.style.left =
             Math.random() * 100 + "%";
 
-
-        piece.style.animationDuration =
+        confetti.style.animationDuration =
             (2 + Math.random() * 2) + "s";
 
+        confetti.style.animationDelay =
+            Math.random() * 0.5 + "s";
 
-        piece.style.animationDelay =
-            Math.random() * .5 + "s";
-
-
-        piece.style.setProperty(
+        confetti.style.setProperty(
             "--drift",
-            (
-                -100 +
-                Math.random() * 200
-            ) + "px"
+            (Math.random() * 160 - 80) + "px"
         );
 
-
-        piece.style.background =
+        confetti.style.background =
             [
                 "#2563eb",
                 "#16a34a",
                 "#f59e0b",
                 "#dc2626",
                 "#7c3aed"
-            ][
-                Math.floor(
-                    Math.random() * 5
-                )
-            ];
+            ][Math.floor(Math.random() * 5)];
+
+        overlay.appendChild(confetti);
+
+        setTimeout(() => {
+
+            confetti.remove();
+
+        }, 4500);
+    }
+}
 
 
-        overlay.appendChild(
-            piece
-        );
+/* =========================================================
+   GROSSES REWARD-POPUP
+========================================================= */
+
+function zeigeNeuenReward(reward) {
+
+    renderRewards();
+
+    const overlay =
+        document.getElementById("rewardModalOverlay");
+
+    if (!overlay) return;
+
+    /* Musik sofort beim Gewinn abspielen */
+    spieleRewardMusik();
+
+    /* Popup-Inhalt */
+    overlay.innerHTML = `
+
+        <div
+            class="reward-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Reward gewonnen"
+        >
+
+            <button
+                class="reward-modal-close"
+                type="button"
+                onclick="schliesseRewardModal()"
+                aria-label="Reward schließen"
+            >
+                ✕
+            </button>
+
+            <div class="reward-modal-badge">
+                🏆 REWARD FREIGESCHALTET
+            </div>
+
+            <div class="reward-modal-icon">
+                ${reward.icon}
+            </div>
+
+            <h2>
+                🎉 GEWONNEN!
+            </h2>
+
+            <div class="reward-modal-points">
+                ⭐ +${reward.punkte} Punkte
+            </div>
+
+            <p class="reward-modal-text">
+                <strong>${reward.name}</strong><br>
+                ${reward.beschreibung}
+            </p>
+
+            <button
+                class="reward-modal-button"
+                type="button"
+                onclick="schliesseRewardModal()"
+            >
+                🎁 Weiter
+            </button>
+
+        </div>
+    `;
+
+    /* Popup anzeigen */
+    overlay.classList.add("show");
+
+    document.body.classList.add("reward-modal-open");
+
+    /* Konfetti starten */
+    starteKonfetti();
+}
 
 
-        setTimeout(
-            () => {
+/* =========================================================
+   NEUER REWARD
+========================================================= */
 
-                piece.remove();
+function zeigeNeuenReward(reward) {
 
-            },
-            4500
-        );
+    renderRewards();
 
+    if (typeof spieleRewardMusik === "function") {
+        spieleRewardMusik();
     }
 
+    const container =
+        document.getElementById("rewardsContainer");
+
+    if (!container) return;
+
+    setTimeout(() => {
+
+        container.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+    }, 200);
+
+    setTimeout(() => {
+
+        alert(
+            "🎉 REWARD FREIGESCHALTET!\n\n" +
+            reward.icon + " " +
+            reward.name +
+            "\n\n" +
+            reward.beschreibung
+        );
+
+    }, 700);
 }
 
 
@@ -1888,46 +3057,98 @@ function erzeugeKonfetti() {
 
 function spielZuruecksetzen() {
 
-    if (!aktuellerBenutzer) {
-
-        return;
-    }
-
-
-    const bestaetigt =
+    const bestaetigung =
         confirm(
-            "Möchtest du deinen gesamten Fortschritt wirklich zurücksetzen?"
+
+            "Möchtest du wirklich den gesamten Fortschritt löschen?\n\n" +
+
+            "Dabei werden Punkte, erledigte Aufgaben " +
+            "und Rewards zurückgesetzt."
+
         );
 
 
-    if (!bestaetigt) {
+    if (!bestaetigung) {
         return;
     }
 
 
-    const keys = [
+    /* =====================================================
+       PUNKTE
+    ===================================================== */
 
-        "integrations_punkte",
-
-        "integrations_erledigte_anzahl",
-
-        "integrations_missions_positionen",
-
-        "integrations_rewards"
-
-    ];
+    localStorage.removeItem(
+        "integrations_punkte"
+    );
 
 
-    keys.forEach(
-        key => {
+    /* =====================================================
+       ERLEDIGTE MISSIONEN
+    ===================================================== */
+
+    localStorage.removeItem(
+        "integrations_erledigte_anzahl"
+    );
+
+
+    /* =====================================================
+       MISSIONS-POSITIONEN
+    ===================================================== */
+
+    localStorage.removeItem(
+        "integrations_missions_positionen"
+    );
+
+
+    /* =====================================================
+       SOZIALBÜRGERHAUS
+    ===================================================== */
+
+    localStorage.removeItem(
+        "sozialbuergerhaus_gefunden"
+    );
+
+
+    /* =====================================================
+       REWARDS
+    ===================================================== */
+
+    rewards.forEach(
+        reward => {
 
             localStorage.removeItem(
-                userStorageKey(key)
+                "reward_erreicht_" +
+                reward.id
             );
 
         }
     );
 
+
+    /* =====================================================
+       GEÖFFNETE WEBSITES
+    ===================================================== */
+
+    Object.keys(
+        localStorage
+    )
+        .filter(
+            key =>
+                key.startsWith(
+                    "website_geoeffnet_"
+                )
+        )
+        .forEach(
+            key =>
+                localStorage.removeItem(
+                    key
+                )
+        );
+
+
+    /* =====================================================
+       VARIABLEN ZURÜCKSETZEN
+    ===================================================== */
 
     punkte = 0;
 
@@ -1936,12 +3157,68 @@ function spielZuruecksetzen() {
     missionsPositionen = {};
 
 
+    /* =====================================================
+       HUD
+    ===================================================== */
+
     aktualisiereHUD();
+
+
+    /* =====================================================
+       REWARDS
+    ===================================================== */
 
     renderRewards();
 
 
-    Object.keys(missionen).forEach(
+    /* =====================================================
+       ALLE KATEGORIEN NEU LADEN
+    ===================================================== */
+
+    Object.keys(
+        missionen
+    )
+        .forEach(
+            kategorie => {
+
+                renderKategorie(
+                    kategorie
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       ERSTE KATEGORIE
+    ===================================================== */
+
+    zeigeKategorie(
+
+        "integration",
+
+        document.querySelector(
+            ".category-card"
+        )
+
+    );
+
+
+    alert(
+        "🔄 Der Integrations-Navigator wurde zurückgesetzt."
+    );
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+Object.keys(
+    missionen
+)
+    .forEach(
         kategorie => {
 
             renderKategorie(
@@ -1952,139 +3229,60 @@ function spielZuruecksetzen() {
     );
 
 
-    alert(
-        "🔄 Dein Fortschritt wurde zurückgesetzt."
+/* =========================================================
+   HUD
+========================================================= */
+
+aktualisiereHUD();
+
+
+/* =========================================================
+   REWARDS
+
+   Beim Laden werden KEINE neuen Rewards ausgelöst.
+   Bereits erreichte Rewards werden nur angezeigt.
+========================================================= */
+
+renderRewards();
+
+
+/* =========================================================
+   PWA SERVICE WORKER
+========================================================= */
+
+if (
+    "serviceWorker" in navigator
+) {
+
+    window.addEventListener(
+        "load",
+        function () {
+
+            navigator.serviceWorker
+                .register(
+                    "./service-worker.js"
+                )
+                .then(
+                    function () {
+
+                        console.log(
+                            "✅ Exploring Integration PWA aktiviert"
+                        );
+
+                    }
+                )
+                .catch(
+                    function (error) {
+
+                        console.error(
+                            "❌ PWA Service Worker Fehler:",
+                            error
+                        );
+
+                    }
+                );
+
+        }
     );
 
 }
-
-
-/* =========================================================
-   SUPABASE SESSION BEIM START
-========================================================= */
-
-async function authBeimStart() {
-
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient.auth.getSession();
-
-
-        if (error) {
-
-            console.error(
-                "Session-Fehler:",
-                error
-            );
-
-            benutzerIstNichtAngemeldet();
-
-            return;
-        }
-
-
-        if (data.session) {
-
-            console.log(
-                "✅ Bestehende Session gefunden."
-            );
-
-
-            benutzerIstAngemeldet(
-                data.session.user
-            );
-
-        }
-
-        else {
-
-            console.log(
-                "ℹ️ Kein Benutzer angemeldet."
-            );
-
-
-            benutzerIstNichtAngemeldet();
-
-        }
-
-
-        supabaseClient.auth.onAuthStateChange(
-            (
-                event,
-                session
-            ) => {
-
-                console.log(
-                    "Auth Event:",
-                    event
-                );
-
-
-                if (session) {
-
-                    benutzerIstAngemeldet(
-                        session.user
-                    );
-
-                }
-
-                else {
-
-                    benutzerIstNichtAngemeldet();
-
-                }
-
-            }
-        );
-
-    }
-
-    catch (fehler) {
-
-        console.error(
-            "Auth Startfehler:",
-            fehler
-        );
-
-        benutzerIstNichtAngemeldet();
-
-    }
-
-}
-
-
-/* =========================================================
-   APP START
-========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        console.log(
-            "🚀 Exploring Integration startet..."
-        );
-
-
-        /*
-         * Hauptbereich zunächst verstecken.
-         * Erst nach Login anzeigen.
-         */
-
-        const main =
-            document.querySelector("main");
-
-
-        if (main) {
-            main.style.display = "none";
-        }
-
-
-        authBeimStart();
-
-    }
-);
