@@ -940,6 +940,9 @@ textarea {
 
     border:
         2px solid #fee2e2;
+
+        max-width: 
+        250px;
 }
 
 .reset-section h2 {
@@ -1137,6 +1140,137 @@ textarea {
 
 }
 
+/* =========================================================
+   INTEGRATIONS-HELFER
+========================================================= */
+
+.integration-chatbot {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 9999;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease,
+        visibility 0.3s ease;
+}
+
+.integration-chatbot.aktiv {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.chatbot-box {
+    position: relative;
+
+    width: 340px;
+    max-width: calc(100vw - 40px);
+
+    padding: 24px;
+
+    background: white;
+    border-radius: 20px;
+
+    box-shadow: 0 8px 35px rgba(0, 0, 0, 0.20);
+
+    text-align: center;
+}
+
+.chatbot-icon {
+    font-size: 42px;
+    margin-bottom: 8px;
+}
+
+.chatbot-box h3 {
+    margin: 5px 0 10px;
+}
+
+.chatbot-box p {
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.chatbot-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+
+    border: none;
+    background: transparent;
+
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.chatbot-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chatbot-buttons button,
+#chatbotFragen button {
+    width: 100%;
+    padding: 12px;
+
+    border: none;
+    border-radius: 10px;
+
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.chatbot-ja {
+    background: #2563eb;
+    color: white;
+}
+
+.chatbot-nein {
+    background: #e5e7eb;
+    color: #333;
+}
+
+#chatbotFragen {
+    margin-top: 15px;
+}
+
+#chatbotFragen button {
+    margin-top: 8px;
+    background: #f3f4f6;
+}
+
+.chatbot-antwort {
+    padding: 15px;
+    background: #f3f4f6;
+    border-radius: 12px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .integration-chatbot {
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+    }
+
+    .chatbot-box {
+        width: auto;
+        max-width: none;
+        padding: 20px;
+    }
+}
 
 /* =========================================================
    GROSSES REWARD-POPUP
